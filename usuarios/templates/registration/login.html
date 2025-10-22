@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SITAG - Sistema Integral de Agrimensura</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: #080d25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      width: 700px;
+      height: 600px;
+      max-width: 90vw;
+      position: relative;
+    }
+
+    .logo-section { text-align: center; margin-bottom: 30px; }
+    .logo-img { width: 200px; height: 200px; display: block; margin: 0 auto 15px auto; }
+
+    .form-group { margin-bottom: 25px; position: relative; }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #567f90;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid #567f90;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #fafbfc;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #567f90;
+      background: #f0f0f0;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .form-input::placeholder { color: #567f90; }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 38px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .password-toggle:hover { color: #567f90; }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .remember-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remember-check input[type="checkbox"] { accent-color: #324fd2; }
+
+    .forgot-link {
+      color: #667eea;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-link:hover { color: #5a6fd8; text-decoration: underline; }
+
+    .login-button {
+      width: 100%;
+      padding: 15px;
+      background: #508364;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .error-msg { color: red; text-align: center; margin-bottom: 15px; font-weight: bold; }
+
+    @media (max-width: 600px) {
+      .logo-img { width: 220px; }
+      .login-container { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-section">
+      <img class="logo-img" src="{% static 'img/logo-sitag.png' %}" alt="Logo SITAG">
+    </div>
+
+    {% if form.errors %}
+      <p class="error-msg">Usuario o contraseña incorrectos</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="id_username">Usuario</label>
+        <input type="text" name="username" class="form-input" id="id_username" placeholder="Ingresa tu usuario" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_password">Contraseña</label>
+        <input type="password" name="password" class="form-input" id="id_password" placeholder="Ingresa tu contraseña" required>
+        <button type="button" class="password-toggle" onclick="togglePassword()">
+          <span class="material-icons" id="toggleIcon">visibility</span>
+        </button>
+      </div>
+
+      <div class="remember-forgot">
+        <label class="remember-check">
+          <input type="checkbox" name="remember">
+          <span>Recordarme</span>
+        </label>
+        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button type="submit" class="login-button">Ingresar</button>
+    </form>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const passwordInput = document.getElementById('id_password');
+      const toggleIcon = document.getElementById('toggleIcon');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.textContent = 'visibility_off';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.textContent = 'visibility';
+      }
+    }
+  </script>
+</body>
+</html>
+

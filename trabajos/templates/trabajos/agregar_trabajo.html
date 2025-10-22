@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Agregar Trabajo - SITAG{% endblock %}
+
+{% block content %}
+<h2>Agregar Nuevo Trabajo</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-red">Guardar trabajo</button>
+</form>
+
+<a href="{% url 'inicio:inicio' %}">← Volver al inicio</a>
+{% endblock %}

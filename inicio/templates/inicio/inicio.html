@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inicio - SITAG{% endblock %}
+
+{% block content %}
+<div class="welcome-header">
+    <h1>Bienvenido, {{ user.first_name }}</h1>
+</div>
+
+<!-- Filtros -->
+<div class="filters" style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+    <select name="filtro_fecha" id="filtro_fecha" class="filter-select">
+        <option value="">Ordenar por fecha</option>
+        <option value="reciente">Más reciente</option>
+        <option value="antiguo">Más antiguo</option>
+    </select>
+
+    <select name="filtro_localidad" id="filtro_localidad" class="filter-select">
+        <option value="">Filtrar por localidad</option>
+        {% for localidad in localidades %}
+            <option value="{{ localidad }}">{{ localidad }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="filtro_estado" id="filtro_estado" class="filter-select">
+        <option value="">Filtrar por estado</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="En curso">En curso</option>
+        <option value="Finalizado">Finalizado</option>
+        <option value="Cancelado">Cancelado</option>
+    </select>
+
+    <button id="aplicar_filtros" class="btn-blue">Aplicar</button>
+</div>
+
+<!-- Estadísticas -->
+<div class="stats">
+    <div class="stat-card stat-clientes">
+        Clientes
+        <span>{{ total_clientes }}</span>
+    </div>
+    <div class="stat-card stat-trabajos">
+        Trabajos activos
+        <span>{{ trabajos_activos }}</span>
+    </div>
+    <div class="stat-card stat-pendientes">
+        Pendientes semana
+        <span>{{ pendientes_semana }}</span>
+    </div>
+</div>
+
+<!-- Tabla de trabajos recientes -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Fecha inicio</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trabajo in trabajos %}
+        <tr>
+            <td>{{ trabajo.id }}</td>
+            <td>{{ trabajo.cliente.nombre }}</td>
+            <td>{{ trabajo.descripcion }}</td>
+            <td>
+                <span class="status {{ trabajo.estado|lower }}">{{ trabajo.estado }}</span>
+            </td>
+            <td>{{ trabajo.fecha_inicio }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align:center;">No hay trabajos recientes</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

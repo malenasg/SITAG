@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trabajos | SITAG{% endblock %}
+
+{% block content %}
+  <h1>Trabajos</h1>
+  <a href="{% url 'trabajos:agregar_trabajo' %}" class="btn">Agregar Trabajo</a>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Opciones</th>
+        <th>Trabajo</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for trabajo in trabajos %}
+        <tr>
+          <td>{{ trabajo.opciones }}</td>
+          <td>{{ trabajo.trab }}</td>
+          <td>{{ trabajo.descripcion }}</td>
+          <td>{{ trabajo.estado }}</td>
+          <td>
+            <a href="{% url 'trabajos:editar' trabajo.id %}">Editar</a> |
+            <a href="{% url 'trabajos:detalle' trabajo.id %}">Ver</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">No hay trabajos cargados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

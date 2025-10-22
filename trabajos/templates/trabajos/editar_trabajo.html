@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar trabajo{% endblock %}
+
+{% block content %}
+<h2>Editar trabajo: {{ trabajo.nombre }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="login-button">Guardar cambios</button>
+</form>
+
+<a href="{% url 'trabajo:lista_trabajos' %}">Volver a la lista</a>
+{% endblock %}
