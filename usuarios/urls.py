@@ -1,12 +1,11 @@
 from django.urls import path
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from . import views
+from . import views as auth_views
 
 app_name = 'usuarios'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', lambda request: (logout(request), redirect('usuarios:login'))[1], name='logout'),
+    path('login/', auth_views.login_view, name='login'),
+    path('logout/', auth_views.logout_view, name='logout'),
+
+    path('', auth_views.lista_usuarios, name='lista_usuarios'),
 ]

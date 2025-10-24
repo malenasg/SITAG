@@ -4,32 +4,137 @@
 {% block title %}Clientes | SITAG{% endblock %}
 
 {% block content %}
-  <h1>Clientes</h1>
-  <a href="{% url 'clientes:agregar_cliente' %}" class="btn">Agregar Cliente</a>
+<!-- Font Awesome para íconos -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
 
-  <table class="tabla">
-    <thead>
+<style>
+/* ====== Contenedor principal ====== */
+.clientes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+}
+
+/* ====== Botón Agregar ====== */
+.btn-agregar {
+  background-color: #22a745;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.25s, transform 0.15s;
+}
+.btn-agregar:hover {
+  background-color: #1e8f3c;
+  transform: scale(1.03);
+}
+
+/* ====== Tabla ====== */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.tabla th {
+  background-color: #f8f9fa;
+  text-align: left;
+  padding: 12px 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.tabla td {
+  padding: 14px 18px;
+  border-top: 1px solid #eee;
+  color: #444;
+}
+
+.tabla tr:hover {
+  background-color: #f6fef7;
+  transition: background-color 0.2s;
+}
+
+/* ====== Botones de acción ====== */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-editar {
+  background-color: #2978cc;
+  color: white;
+}
+.btn-editar:hover {
+  background-color: #3271c0;
+}
+
+.btn-ocultar {
+  background-color: #e9ecef;
+  color: #333;
+}
+.btn-ocultar:hover {
+  background-color: #d6d8da;
+}
+</style>
+
+<div class="clientes-header">
+  <h1>Clientes</h1>
+  <a href="{% url 'clientes:agregar_cliente' %}" class="btn-agregar">
+    <i class="fa-solid fa-user-plus"></i> Agregar Cliente
+  </a>
+</div>
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Teléfono</th>
+      <th>Email</th>
+      <th>Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cliente in clientes %}
       <tr>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Acciones</th>
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.telefono }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>
+          <a href="{% url 'clientes:editar' cliente.id %}" class="btn-accion btn-editar">
+            <i class="fa-solid fa-pen-to-square"></i> Editar
+          </a>
+          <a href="{% url 'clientes:detalle' cliente.id %}" class="btn-accion btn-ocultar">
+            <i class="fa-solid fa-eye-slash"></i> Ocultar
+          </a>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      {% for cliente in clientes %}
-        <tr>
-          <td>{{ cliente.nombre }}</td>
-          <td>{{ cliente.telefono }}</td>
-          <td>{{ cliente.email }}</td>
-          <td>
-            <a href="{% url 'clientes:editar' cliente.id %}">Editar</a> |
-            <a href="{% url 'clientes:detalle' cliente.id %}">Ver</a>
-          </td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="4">No hay clientes cargados.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% empty %}
+      <tr><td colspan="4">No hay clientes cargados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
+

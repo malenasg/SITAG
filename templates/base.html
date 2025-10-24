@@ -105,7 +105,7 @@
         }
         .stat-clientes { background-color: #60836eff; }
         .stat-trabajos { background-color: #b5b5c8; }
-        .stat-pendientes { background-color: #f2eaa8; }
+        .stat-pendientes { background-color: #bdbcbc; }
 
         .stat-card span {
             display: block;
@@ -147,7 +147,7 @@
         }
 
         .inline-form .btn {
-            width: 140px;
+            width: 190px;
             padding: 12px 24px;
             border: none;
             border-radius: 12px;
@@ -156,7 +156,7 @@
             cursor: pointer;
             transition: all 0.2s ease-in-out;
             color: white;
-            background-color: #424242ff;
+            background-color: #b5b5c8;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
@@ -177,7 +177,7 @@
 
       .filter-form label {
           font-weight: bold;
-          color: #333;
+          color: #000000;
       }
 
       .filter-form select {
@@ -196,6 +196,7 @@
             <a href="{% url 'inicio:inicio' %}" class="active">Inicio</a>
             <a href="{% url 'clientes:lista_clientes' %}">Clientes</a>
             <a href="{% url 'trabajos:lista_trabajos' %}">Trabajos</a>
+            <a href="{% url 'usuarios:lista_usuarios' %}">Usuarios</a>
         </div>
 
         <!-- 👇 Formulario de cerrar sesión, pegado al fondo -->

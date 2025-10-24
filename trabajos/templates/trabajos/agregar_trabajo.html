@@ -8,7 +8,53 @@
 
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <fieldset>
+        <legend>Datos del Trabajo</legend>
+        {{ trabajo_form.non_field_errors }}
+        <div class="form-group">
+            <label for="id_cliente">Cliente:</label>
+            {{ trabajo_form.cliente }}
+        </div>
+        <div class="form-group">
+            <label for="id_descripcion">Descripción:</label>
+            {{ trabajo_form.descripcion }}
+        </div>
+        <div class="form-group">
+            <label for="id_estado">Estado:</label>
+            {{ trabajo_form.estado }}
+        </div>
+        <div class="form-group">
+            <label for="id_visible">Visible:</label>
+            {{ trabajo_form.visible }}
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Ubicación del Trabajo</legend>
+        {{ ubicacion_form.non_field_errors }}
+        <div class="form-group">
+            <label for="id_calle">Calle:</label>
+            {{ ubicacion_form.calle }}
+        </div>
+        <div class="form-group">
+            <label for="id_numero">Número:</label>
+            {{ ubicacion_form.numero }}
+        </div>
+        <div class="form-group">
+            <label for="id_ciudad">Ciudad:</label>
+            {{ ubicacion_form.ciudad }}
+        </div>
+        <div class="form-group">
+            <label for="id_barrio">Barrio:</label>
+            {{ ubicacion_form.barrio }}
+        </div>
+        <div class="form-group">
+            <label for="id_nomenclatura_catastral">Nomenclatura Catastral:</label>
+            {{ ubicacion_form.nomenclatura_catastral }}
+        </div>
+    </fieldset>
+
     <button type="submit" class="btn-red">Guardar trabajo</button>
 </form>
 
