@@ -121,16 +121,18 @@ h1 {
   <tbody>
     {% for trabajo in trabajos %}
       <tr>
-        <td>{{ trabajo.nombre }}</td>
+        <td>{{ trabajo.titulo }}</td>
         <td>{{ trabajo.descripcion }}</td>
         <td>{{ trabajo.estado }}</td>
         <td>
           <a href="{% url 'trabajos:editar_trabajo' trabajo.id %}" class="btn-accion btn-editar">
             <i class="fa-solid fa-pen-to-square"></i> Editar
           </a>
-          <a href="{% url 'trabajos:detalle_trabajo' trabajo.id %}" class="btn-accion btn-ver">
+          <a href="{% url 'trabajos:detalle_trabajo' trabajo_id=trabajo.id %}" class="btn-accion btn-ver">
             <i class="fa-solid fa-eye"></i> Ver
-          </a>
+        </a>
+
+
         </td>
       </tr>
     {% empty %}

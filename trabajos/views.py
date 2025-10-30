@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from datetime import date, timedelta
-
-from .models import Trabajo, Plano, Cuenta
-from .forms import TrabajoForm, UbicacionForm
 from clientes.models import Cliente
+from trabajos.models import Trabajo, Plano, Cuenta
+from .forms import TrabajoForm, UbicacionForm
+
 
 
 # 🔹 Lista de trabajos
@@ -53,19 +53,6 @@ def editar_trabajo(request, trabajo_id):
     else:
         form = TrabajoForm(instance=trabajo)
     return render(request, 'trabajos/editar_trabajo.html', {'form': form, 'trabajo': trabajo})
-
-
-# 🔹 Ver trabajos pendientes de esta semana
-def pendientes_semana(request):
-    hoy = date.today()
-    fin_semana = hoy + timedelta(days=7)
-    trabajos = Trabajo.objects.filter(
-        estado='Pendiente',
-        fecha_inicio__range=[hoy, fin_semana],
-        visible=True
-    )
-    return render(request, 'trabajos/pendientes_semana.html', {'trabajos': trabajos})
-
 
 # 🔹 Detalle de un trabajo (cliente, planos, cuentas)
 def detalle_trabajo(request, trabajo_id):

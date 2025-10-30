@@ -1,62 +1,97 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Agregar Trabajo - SITAG{% endblock %}
-
 {% block content %}
-<h2>Agregar Nuevo Trabajo</h2>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">➕ Crear nuevo trabajo</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <!-- Mensajes -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Sección: Datos del trabajo -->
+                <h5 class="mb-3 text-primary">🧾 Datos del trabajo</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Cliente</label>
+                        {{ trabajo_form.cliente }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Responsable</label>
+                        {{ trabajo_form.responsable }}
+                    </div>
+                </div>
 
-<form method="POST">
-    {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Título</label>
+                    {{ trabajo_form.titulo }}
+                </div>
 
-    <fieldset>
-        <legend>Datos del Trabajo</legend>
-        {{ trabajo_form.non_field_errors }}
-        <div class="form-group">
-            <label for="id_cliente">Cliente:</label>
-            {{ trabajo_form.cliente }}
-        </div>
-        <div class="form-group">
-            <label for="id_descripcion">Descripción:</label>
-            {{ trabajo_form.descripcion }}
-        </div>
-        <div class="form-group">
-            <label for="id_estado">Estado:</label>
-            {{ trabajo_form.estado }}
-        </div>
-        <div class="form-group">
-            <label for="id_visible">Visible:</label>
-            {{ trabajo_form.visible }}
-        </div>
-    </fieldset>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    {{ trabajo_form.descripcion }}
+                </div>
 
-    <fieldset>
-        <legend>Ubicación del Trabajo</legend>
-        {{ ubicacion_form.non_field_errors }}
-        <div class="form-group">
-            <label for="id_calle">Calle:</label>
-            {{ ubicacion_form.calle }}
-        </div>
-        <div class="form-group">
-            <label for="id_numero">Número:</label>
-            {{ ubicacion_form.numero }}
-        </div>
-        <div class="form-group">
-            <label for="id_ciudad">Ciudad:</label>
-            {{ ubicacion_form.ciudad }}
-        </div>
-        <div class="form-group">
-            <label for="id_barrio">Barrio:</label>
-            {{ ubicacion_form.barrio }}
-        </div>
-        <div class="form-group">
-            <label for="id_nomenclatura_catastral">Nomenclatura Catastral:</label>
-            {{ ubicacion_form.nomenclatura_catastral }}
-        </div>
-    </fieldset>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        {{ trabajo_form.estado }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Visible</label>
+                        {{ trabajo_form.visible }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha de inicio</label>
+                        {{ trabajo_form.fecha_inicio }}
+                    </div>
+                </div>
 
-    <button type="submit" class="btn-red">Guardar trabajo</button>
-</form>
+                <hr>
 
-<a href="{% url 'inicio:inicio' %}">← Volver al inicio</a>
+                <!-- Sección: Ubicación -->
+                <h5 class="mb-3 text-primary">📍 Ubicación</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Calle</label>
+                        {{ ubicacion_form.calle }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Número</label>
+                        {{ ubicacion_form.numero }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Barrio</label>
+                        {{ ubicacion_form.barrio }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ciudad</label>
+                        {{ ubicacion_form.ciudad }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nomenclatura catastral</label>
+                        {{ ubicacion_form.nomenclatura_catastral }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{% url 'trabajos:lista_trabajos' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-success">💾 Guardar trabajo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

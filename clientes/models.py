@@ -18,6 +18,7 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     activo = models.BooleanField(default=True) 
+    localidad = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.nombre

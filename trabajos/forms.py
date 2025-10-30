@@ -11,13 +11,13 @@ class TrabajoForm(forms.ModelForm):
             'estado',
             'visible',
             'responsable',
-            'fecha_fin',
+            'fecha_inicio',
         ]
         widgets = {
             'titulo': forms.TextInput(attrs={'placeholder': 'Ej: Mensura Lote 12 - Barrio Norte'}),
             'descripcion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Detalle del trabajo...'}),
             'estado': forms.Select(attrs={'class': 'form-select'}),
-            'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
         }
 
 

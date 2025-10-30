@@ -20,7 +20,7 @@ class Trabajo(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='trabajos')
     titulo = models.CharField(max_length=250, blank=True)   
     descripcion = models.TextField()
-    fecha_inicio = models.DateField(auto_now_add=True)
+    fecha_inicio = models.DateField(null=True, blank=True)
     fecha_fin = models.DateField(null=True, blank=True)     
     estado = models.CharField(
         max_length=20,

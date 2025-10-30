@@ -1,17 +1,3 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Clientes | SITAG{% endblock %}
-
-{% block content %}
-<!-- Font Awesome para íconos -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
-
-<style>
-
 .clientes-header {
   display: flex;
   justify-content: space-between;
@@ -37,6 +23,7 @@ h1 {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.25s, transform 0.15s;
 }
+
 .btn-agregar:hover {
   background-color: #1e8f3c;
   transform: scale(1.03);
@@ -88,6 +75,7 @@ h1 {
   background-color: #2978cc;
   color: white;
 }
+
 .btn-editar:hover {
   background-color: #3271c0;
 }
@@ -96,46 +84,7 @@ h1 {
   background-color: #e9ecef;
   color: #333;
 }
+
 .btn-ocultar:hover {
   background-color: #d6d8da;
 }
-</style>
-
-<div class="clientes-header">
-  <h1>Clientes</h1>
-  <a href="{% url 'clientes:agregar_cliente' %}" class="btn-agregar">
-    <i class="fa-solid fa-user-plus"></i>  Agregar Cliente
-  </a>
-</div>
-
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Teléfono</th>
-      <th>Email</th>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for cliente in clientes %}
-      <tr>
-        <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.telefono }}</td>
-        <td>{{ cliente.email }}</td>
-        <td>
-          <a href="{% url 'clientes:editar' cliente.id %}" class="btn-accion btn-editar">
-            <i class="fa-solid fa-pen-to-square"></i> Editar
-          </a>
-          <a href="{% url 'clientes:detalle' cliente.id %}" class="btn-accion btn-ocultar">
-            <i class="fa-solid fa-eye-slash"></i> Ocultar
-          </a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="4">No hay clientes cargados.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %}
-
