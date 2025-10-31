@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Usuarios Inactivos | SITAG{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4" style="color:#8B0000;">🚫 Usuarios inactivos</h3>
+
+    {% if usuarios %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Nombre completo</th>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.nombre_completo }}</td>
+                        <td>{{ usuario.username }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.rol }}</td>
+                        <td><span class="badge bg-danger">Inactivo</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center mt-4 text-muted">No hay usuarios inactivos.</p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'usuarios:lista_usuarios' %}" class="btn btn-outline-secondary">Volver a la lista activa</a>
+    </div>
+</div>
+{% endblock %}

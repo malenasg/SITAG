@@ -140,4 +140,10 @@ h1 {
     {% endfor %}
   </tbody>
 </table>
+
+<div class="btn-accion">
+  <a href="{% url 'usuarios:lista_usuarios_inactivos' %}" class="btn btn-outline-danger">
+    Ver usuarios inactivos
+  </a>
+</div>
 {% endblock %}

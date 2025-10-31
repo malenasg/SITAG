@@ -32,7 +32,7 @@
 
     .logo-section { text-align: center; margin-bottom: 10px; }
     .logo-img { width: 160px; height: auto; display: block; margin: 0 auto 10px auto; }
-
+    
     .form-group { margin-bottom: 25px; position: relative; }
     .form-label {
       display: block;
@@ -123,6 +123,33 @@
       .logo-img { width: 220px; }
       .login-container { padding: 30px 20px; }
     }
+
+    .alert {
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-weight: 500;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .alert-success {
+      background-color: #e6f9ec;
+      color: #256d3b;
+      border: 1px solid #508364;
+    }
+
+    .alert-error {
+      background-color: #ffeaea;
+      color: #c0392b;
+      border: 1px solid #e74c3c;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
   </style>
 </head>
 <body>
@@ -131,8 +158,12 @@
       <img class="logo-img" src="{% static 'img/logo-sitag.png' %}" alt="Logo SITAG">
     </div>
 
-    {% if form.errors %}
-      <p class="error-msg">Usuario o contraseña incorrectos</p>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
     {% endif %}
 
     <form method="post" action="{% url 'login' %}">
