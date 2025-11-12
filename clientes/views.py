@@ -1,13 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cliente
 from .forms import ClienteForm
-from trabajos.models import Trabajo
-
-# Detalle cliente
-def detalle_cliente(request, id):
-    cliente = get_object_or_404(Cliente, id=id)
-    trabajos = Trabajo.objects.filter(cliente=cliente, visible=True)
-    return render(request, 'clientes/detalle_cliente.html', {'cliente': cliente, 'trabajos': trabajos})
+from django.contrib import messages
 
 # Lista clientes
 def lista_clientes(request):
@@ -19,22 +13,35 @@ def agregar_cliente(request):
     if request.method == 'POST':
         form = ClienteForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('inicio:inicio')  
+            cliente = form.save(commit=False)
+            cliente.activo = True
+            cliente.save()
+            messages.success(request, "Cliente agregado correctamente")
+            return redirect('clientes:lista_clientes')
+        else:
+            messages.error(request, "Por favor corrija los errores del formulario")
     else:
         form = ClienteForm()
+
     return render(request, 'clientes/agregar_cliente.html', {'form': form})
 
 # Editar cliente
 def editar_cliente(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
+    
     if request.method == 'POST':
         form = ClienteForm(request.POST, instance=cliente)
         if form.is_valid():
-            form.save()
+            cliente = form.save(commit=False)
+            cliente.activo = True
+            cliente.save()
+            messages.success(request, "Cliente actualizado correctamente")
             return redirect('clientes:lista_clientes')
+        else:
+            messages.error(request, "Por favor corrija los errores del formulario")
     else:
         form = ClienteForm(instance=cliente)
+    
     return render(request, 'clientes/editar_cliente.html', {'form': form, 'cliente': cliente})
 
 # Ocultar cliente
@@ -42,11 +49,5 @@ def ocultar_cliente(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
     cliente.activo = False
     cliente.save()
-    return redirect('clientes:lista_clientes')
-
-# Mostrar cliente
-def mostrar_cliente(request, cliente_id):
-    cliente = get_object_or_404(Cliente, id=cliente_id)
-    cliente.activo = True
-    cliente.save()
+    messages.success(request, "Cliente ocultado correctamente")
     return redirect('clientes:lista_clientes')

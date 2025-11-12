@@ -15,7 +15,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Inicio de sesión exitoso.")
-            return redirect('inicio')
+            return redirect('inicio:inicio')
         else:
             messages.error(request, "Usuario/contraseña incorrectos. Inténtelo de nuevo.")
     return render(request, 'registration/login.html')
@@ -57,7 +57,7 @@ def crear_usuario(request):
             rol=rol,
             is_active=activo
         )
-        user.set_password(password1)  # 🔹 Encripta la contraseña correctamente
+        user.set_password(password1) 
         user.save()
 
         messages.success(request, "Usuario creado correctamente.")
@@ -81,6 +81,6 @@ def desactivar_usuario(request, id):
 def activar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
     usuario.activo = True
-    usuario.is_active = True  # si querés que vuelva a poder iniciar sesión
+    usuario.is_active = True 
     usuario.save()
     return redirect('usuarios:lista_usuarios_inactivos')

@@ -8,11 +8,113 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 />
 
+<div class="form-container">
+  <h2>Editar Cliente: {{ cliente.nombre }}</h2>
+
+  <!-- Mensajes -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Errores por campo -->
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Tipo de Cliente -->
+    <div class="form-section">
+      <h3>Tipo de Cliente</h3>
+      <p>{{ form.tipo_cliente.label_tag }} {{ form.tipo_cliente }}</p>
+    </div>
+
+    <!-- Datos Persona Física -->
+    <div class="form-section" id="datos-fisica">
+      <h3>Datos Personales (Persona Física)</h3>
+      <p>{{ form.nombre.label_tag }} {{ form.nombre }}</p>
+      <p>{{ form.apellido.label_tag }} {{ form.apellido }}</p>
+      <p>{{ form.cuil.label_tag }} {{ form.cuil }}</p>
+    </div>
+
+    <!-- Datos Persona Jurídica -->
+    <div class="form-section" id="datos-juridica">
+      <h3>Datos de la Empresa (Persona Jurídica)</h3>
+      <p>{{ form.razon_social.label_tag }} {{ form.razon_social }}</p>
+      <p>{{ form.cuil.label_tag }} {{ form.cuil }}</p>
+    </div>
+
+    <!-- Datos de Contacto -->
+    <div class="form-section">
+      <h3>Datos de Contacto</h3>
+      <p>{{ form.telefono.label_tag }} {{ form.telefono }}</p>
+      <p>{{ form.email.label_tag }} {{ form.email }}</p>
+    </div>
+
+    <!-- Datos de Ubicación -->
+    <div class="form-section">
+      <h3>Datos de Ubicación</h3>
+      <p>{{ form.provincia.label_tag }} {{ form.provincia }}</p>
+      <p>{{ form.localidad.label_tag }} {{ form.localidad }}</p>
+      <p>{{ form.calle.label_tag }} {{ form.calle }}</p>
+      <p>{{ form.numero.label_tag }} {{ form.numero }}</p>
+      <p>{{ form.barrio.label_tag }} {{ form.barrio }}</p>
+      <p>{{ form.piso.label_tag }} {{ form.piso }}</p>
+      <p>{{ form.departamento.label_tag }} {{ form.departamento }}</p>
+      <p>{{ form.codigo_postal.label_tag }} {{ form.codigo_postal }}</p>
+    </div>
+
+    <button type="submit" class="btn-guardar">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+    </button>
+  </form>
+
+  <a href="{% url 'clientes:lista_clientes' %}" class="btn-volver">
+    <i class="fa-solid fa-arrow-left"></i> Volver a la lista
+  </a>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tipoSelect = document.getElementById("id_tipo_cliente");
+    const datosFisica = document.getElementById("datos-fisica");
+    const datosJuridica = document.getElementById("datos-juridica");
+
+    function actualizarFormulario() {
+        if (tipoSelect.value === "juridica") {
+            datosJuridica.style.display = "block";
+            datosFisica.style.display = "none";
+        } else {
+            datosJuridica.style.display = "none";
+            datosFisica.style.display = "block";
+        }
+    }
+
+    tipoSelect.addEventListener("change", actualizarFormulario);
+    actualizarFormulario();
+});
+</script>
+
 <style>
-/* ===== CONTENEDOR PRINCIPAL ===== */
 .form-container {
-  width: 360px;              /* más chico */
-  margin: 40px 0 0 60px;     /* más arriba y desplazado a la izquierda */
+  width: 360px;
+  margin: 40px 0 0 60px;
   background: #fff;
   padding: 25px 30px;
   border-radius: 10px;
@@ -20,16 +122,14 @@
   position: relative;
 }
 
-/* ===== TÍTULO ===== */
 .form-container h2 {
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 20px;
-  text-align: left; /* alineado con el formulario */
+  text-align: left;
   color: #222;
 }
 
-/* ===== CAMPOS ===== */
 .form-container form p {
   display: flex;
   flex-direction: column;
@@ -61,7 +161,6 @@
   box-shadow: 0 0 4px rgba(34, 167, 69, 0.3);
 }
 
-/* ===== BOTÓN GUARDAR ===== */
 .btn-guardar {
   display: flex;
   align-items: center;
@@ -87,7 +186,6 @@
   margin-right: 6px;
 }
 
-/* ===== LINK VOLVER ===== */
 .btn-volver {
   display: block;
   margin-top: 12px;
@@ -102,23 +200,20 @@
 .btn-volver:hover {
   color: #22a745;
 }
+
+.form-section {
+    border: 1px solid #ddd;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+.form-section h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
 </style>
-
-<div class="form-container">
-  <h2>Editar Cliente: {{ cliente.nombre }}</h2>
-
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn-guardar">
-      <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
-    </button>
-  </form>
-
-  <a href="{% url 'clientes:lista_clientes' %}" class="btn-volver">
-    <i class="fa-solid fa-arrow-left"></i> Volver a la lista
-  </a>
-</div>
 {% endblock %}
-
-

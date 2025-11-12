@@ -5,20 +5,16 @@
 
 {% block content %}
 <!-- Font Awesome para íconos -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-
+/* ====== Cabecera ====== */
 .clientes-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
 }
-
 h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -34,7 +30,7 @@ h1 {
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   transition: background-color 0.25s, transform 0.15s;
 }
 .btn-agregar:hover {
@@ -49,9 +45,8 @@ h1 {
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-
 .tabla th {
   background-color: #f8f9fa;
   text-align: left;
@@ -59,13 +54,11 @@ h1 {
   font-weight: 600;
   color: #333;
 }
-
 .tabla td {
   padding: 14px 18px;
   border-top: 1px solid #eee;
   color: #444;
 }
-
 .tabla tr:hover {
   background-color: #f6fef7;
   transition: background-color 0.2s;
@@ -83,7 +76,6 @@ h1 {
   font-weight: 500;
   transition: all 0.2s;
 }
-
 .btn-editar {
   background-color: #2978cc;
   color: white;
@@ -91,7 +83,6 @@ h1 {
 .btn-editar:hover {
   background-color: #3271c0;
 }
-
 .btn-ocultar {
   background-color: #e9ecef;
   color: #333;
@@ -104,38 +95,51 @@ h1 {
 <div class="clientes-header">
   <h1>Clientes</h1>
   <a href="{% url 'clientes:agregar_cliente' %}" class="btn-agregar">
-    <i class="fa-solid fa-user-plus"></i>  Agregar Cliente
+    <i class="fa-solid fa-user-plus"></i> Agregar Cliente
   </a>
 </div>
 
 <table class="tabla">
   <thead>
     <tr>
-      <th>Nombre</th>
+      <th>Cliente</th>
       <th>Teléfono</th>
       <th>Email</th>
+      <th>Tipo</th>
       <th>Opciones</th>
     </tr>
   </thead>
   <tbody>
     {% for cliente in clientes %}
       <tr>
-        <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.telefono }}</td>
-        <td>{{ cliente.email }}</td>
+        <td>
+          {% if cliente.tipo_cliente == 'juridica' %}
+            {{ cliente.razon_social }}
+          {% else %}
+            {{ cliente.nombre }} {{ cliente.apellido }}
+          {% endif %}
+        </td>
+        <td>{{ cliente.telefono|default:"-" }}</td>
+        <td>{{ cliente.email|default:"-" }}</td>
+        <td>{{ cliente.get_tipo_cliente_display }}</td>
         <td>
           <a href="{% url 'clientes:editar' cliente.id %}" class="btn-accion btn-editar">
             <i class="fa-solid fa-pen-to-square"></i> Editar
           </a>
-          <a href="{% url 'clientes:detalle' cliente.id %}" class="btn-accion btn-ocultar">
-            <i class="fa-solid fa-eye-slash"></i> Ocultar
-          </a>
+          {% if cliente.activo %}
+            <a href="{% url 'clientes:ocultar' cliente.id %}" class="btn-accion btn-ocultar">
+              <i class="fa-solid fa-eye-slash"></i> Ocultar
+            </a>
+          {% else %}
+            <span class="text-muted">Oculto</span>
+          {% endif %}
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="4">No hay clientes cargados.</td></tr>
+      <tr>
+        <td colspan="5" style="text-align: center;">No hay clientes cargados.</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endblock %}
-

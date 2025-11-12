@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SITAG{% endblock %}</title>
-    
+
     {% load static %}
     <link rel="stylesheet" href="{% static 'inicio/styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         body {
@@ -20,160 +19,49 @@
 
         /* Sidebar */
         .sidebar {
-            width: 200px;
-            background-color: #2c2e5e;
+            width: 220px;
+            background-color: #1b1c3bff;
             color: white;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* empuja el botón al fondo */
+            justify-content: space-between;
             padding: 20px 0;
             min-height: 100vh;
         }
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
-            color: white;
+        .sidebar img.logo {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 150px;
+            height: auto;
         }
 
-        .sidebar a {
+        .sidebar nav a {
             color: white;
             text-decoration: none;
             padding: 12px 20px;
             display: block;
-            transition: background 0.3s;
             margin-bottom: 5px;
+            border-radius: 8px;
+            transition: background 0.3s;
         }
 
-        .sidebar a.active {
+        .sidebar nav a.active {
             background-color: #508364;
         }
 
-        .sidebar a:hover {
+        .sidebar nav a:hover {
             background-color: #080d25;
         }
 
-        /* Imagen redonda del logo */
-        .logo-redondo {
-            height: 150px;
-            width: 150px;
-            display: block;
-            margin: 0 auto;
-            border-radius: 50%;
-            background-color: transparent;
-            object-fit: cover;
-        }
-
-        /* Main content */
-        main {
-            flex: 1;
-            padding: 30px;
-        }
-
-        /* Header bienvenida */
-        .welcome-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .welcome-header h1 {
-            color: #333;
-            font-size: 24px;
-        }
-
-        .welcome-header img {
-            height: 50px;
-        }
-
-        /* Botones */
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .buttons button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-blue { background-color: #567f90; }
-        .btn-green { background-color: #508364; }
-        .btn-gray { background-color: #ccc; color: #333; }
-
-        /* Estadísticas */
-        .stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            flex: 1;
-            min-width: 150px;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: #000000ff;
-            font-weight: bold;
-        }
-
-        .stat-clientes { background-color: #60836eff; }
-        .stat-trabajos { background-color: #b5b5c8; }
-        .stat-pendientes { background-color: #bdbcbc; }
-
-        .stat-card span {
-            display: block;
-            margin-top: 8px;
-            font-weight: normal;
-            color: #000000ff;
-            font-size: 14px;
-        }
-
-        /* Tabla */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #ddd;
-        }
-
-        td .status {
-            padding: 4px 8px;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .status.cancelado { background-color: #c1272d; }
-        .status.pendiente { background-color: #f39c12; }
-        .status.finalizado { background-color: #27ae60; }
-
         /* Botón de cerrar sesión */
-        .inline-form {
-            display: flex;
-            justify-content: center;
+        .inline-form { 
+            display: flex; 
+            justify-content: center; 
             padding: 20px;
         }
-
         .inline-form .btn {
-            width: 190px;
+            width: 180px;
             padding: 12px 24px;
             border: none;
             border-radius: 12px;
@@ -183,58 +71,39 @@
             transition: all 0.2s ease-in-out;
             color: white;
             background-color: #b5b5c8;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
         .inline-form .btn:hover {
             background-color: #424242ff;
             transform: translateY(-2px);
         }
 
-        .filter-form {
-            background: #ffffff;
-            padding: 12px 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Main content */
+        main {
+            flex: 1;
+            padding: 30px;
         }
 
-        .filter-form label {
-            font-weight: bold;
-            color: #000000;
-        }
-
-        .filter-form select {
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
         <div>
-            <h2>
-                <img src="{% static 'img/logo.png' %}" alt="SITAG Logo" class="logo-redondo">
-            </h2>
-            <a href="{% url 'inicio:inicio' %}" class="active">
-                <i class="fa-solid fa-house"></i> Inicio
-            </a>
-            <a href="{% url 'clientes:lista_clientes' %}">
-                <i class="fa-solid fa-users"></i> Clientes
-            </a>
-            <a href="{% url 'trabajos:lista_trabajos' %}">
-                <i class="fa-solid fa-briefcase"></i> Trabajos
-            </a>
-            <a href="{% url 'usuarios:lista_usuarios' %}">
-                <i class="fa-solid fa-user"></i> Usuarios
-            </a>
+            <!-- Logo -->
+            <img class="logo" src="{% static 'img/logo-circulo.png' %}" alt="Logo SITAG">
+
+            <!-- Menú -->
+            <nav>
+                <a href="{% url 'inicio:inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">Inicio</a>
+                <a href="{% url 'clientes:lista_clientes' %}" class="{% if request.resolver_match.url_name == 'lista_clientes' %}active{% endif %}">Clientes</a>
+                <a href="{% url 'trabajos:lista_trabajos' %}" class="{% if request.resolver_match.url_name == 'lista_trabajos' %}active{% endif %}">Trabajos</a>
+                {% if request.user.rol == 'administrador' %}
+                    <a href="{% url 'usuarios:lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">Usuarios</a>
+                {% endif %}
+            </nav>
         </div>
 
-        <!-- Formulario de cerrar sesión, pegado al fondo -->
+        <!-- Botón de cerrar sesión -->
         <form action="{% url 'logout' %}" method="post" class="inline-form">
             {% csrf_token %}
             <button type="submit" class="btn">Cerrar sesión</button>
@@ -244,9 +113,7 @@
     <!-- Main content -->
     <main>
         {% block content %}
-        <!-- Aquí van los bloques de contenido de cada página -->
         {% endblock %}
-
         <footer style="margin-top: 30px; text-align: center; color: #555;">
             &copy; {{ year }} SITAG
         </footer>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from datetime import date, timedelta
 from clientes.models import Cliente
-from trabajos.models import Trabajo, Plano, Cuenta
+from trabajos.models import Trabajo, Ubicacion, Plano, Cuenta
 from .forms import TrabajoForm, UbicacionForm
 
 
@@ -44,15 +44,30 @@ def ocultar_trabajo(request, id):
 # 🔹 Editar un trabajo existente
 def editar_trabajo(request, trabajo_id):
     trabajo = get_object_or_404(Trabajo, id=trabajo_id)
-    if request.method == 'POST':
-        form = TrabajoForm(request.POST, instance=trabajo)
-        if form.is_valid():
-            form.save()
+    if trabajo.ubicacion:
+        ubicacion = trabajo.ubicacion
+    else:
+        ubicacion = Ubicacion()
+
+    if request.method == "POST":
+        trabajo_form = TrabajoForm(request.POST, instance=trabajo)
+        ubicacion_form = UbicacionForm(request.POST, instance=ubicacion)
+        if trabajo_form.is_valid() and ubicacion_form.is_valid():
+            ubicacion = ubicacion_form.save()
+            trabajo = trabajo_form.save(commit=False)
+            trabajo.ubicacion = ubicacion
+            trabajo.save()
             messages.success(request, "Trabajo actualizado correctamente.")
             return redirect('trabajos:lista_trabajos')
     else:
-        form = TrabajoForm(instance=trabajo)
-    return render(request, 'trabajos/editar_trabajo.html', {'form': form, 'trabajo': trabajo})
+        trabajo_form = TrabajoForm(instance=trabajo)
+        ubicacion_form = UbicacionForm(instance=ubicacion)
+
+    return render(request, 'trabajos/editar_trabajo.html', {
+        'trabajo_form': trabajo_form,
+        'ubicacion_form': ubicacion_form,
+        'trabajo': trabajo,
+    })
 
 # 🔹 Detalle de un trabajo (cliente, planos, cuentas)
 def detalle_trabajo(request, trabajo_id):

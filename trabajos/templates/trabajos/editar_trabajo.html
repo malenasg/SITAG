@@ -1,15 +1,135 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Editar trabajo{% endblock %}
+{% block title %}Editar Trabajo | SITAG{% endblock %}
 
 {% block content %}
-<h2>Editar trabajo: {{ trabajo.nombre }}</h2>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h4 class="mb-0">✏️ Editar trabajo</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST">
+                {% csrf_token %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="login-button">Guardar cambios</button>
-</form>
+                <!-- Mensajes -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
 
-<a href="{% url 'trabajo:lista_trabajos' %}">Volver a la lista</a>
+                <!-- Sección: Datos del trabajo -->
+                <h5 class="mb-3 text-primary">🧾 Datos del trabajo</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Cliente</label>
+                        {{ trabajo_form.cliente }}
+                        {% if trabajo_form.cliente.errors %}
+                            <div class="text-danger">{{ trabajo_form.cliente.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Responsable</label>
+                        {{ trabajo_form.responsable }}
+                        {% if trabajo_form.responsable.errors %}
+                            <div class="text-danger">{{ trabajo_form.responsable.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Título</label>
+                    {{ trabajo_form.titulo }}
+                    {% if trabajo_form.titulo.errors %}
+                        <div class="text-danger">{{ trabajo_form.titulo.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    {{ trabajo_form.descripcion }}
+                    {% if trabajo_form.descripcion.errors %}
+                        <div class="text-danger">{{ trabajo_form.descripcion.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        {{ trabajo_form.estado }}
+                        {% if trabajo_form.estado.errors %}
+                            <div class="text-danger">{{ trabajo_form.estado.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Visible</label>
+                        {{ trabajo_form.visible }}
+                        {% if trabajo_form.visible.errors %}
+                            <div class="text-danger">{{ trabajo_form.visible.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha de inicio</label>
+                        {{ trabajo_form.fecha_inicio }}
+                        {% if trabajo_form.fecha_inicio.errors %}
+                            <div class="text-danger">{{ trabajo_form.fecha_inicio.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Sección: Ubicación -->
+                <h5 class="mb-3 text-primary">📍 Ubicación</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Calle</label>
+                        {{ ubicacion_form.calle }}
+                        {% if ubicacion_form.calle.errors %}
+                            <div class="text-danger">{{ ubicacion_form.calle.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Número</label>
+                        {{ ubicacion_form.numero }}
+                        {% if ubicacion_form.numero.errors %}
+                            <div class="text-danger">{{ ubicacion_form.numero.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Barrio</label>
+                        {{ ubicacion_form.barrio }}
+                        {% if ubicacion_form.barrio.errors %}
+                            <div class="text-danger">{{ ubicacion_form.barrio.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ciudad</label>
+                        {{ ubicacion_form.ciudad }}
+                        {% if ubicacion_form.ciudad.errors %}
+                            <div class="text-danger">{{ ubicacion_form.ciudad.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nomenclatura catastral</label>
+                        {{ ubicacion_form.nomenclatura_catastral }}
+                        {% if ubicacion_form.nomenclatura_catastral.errors %}
+                            <div class="text-danger">{{ ubicacion_form.nomenclatura_catastral.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a href="{% url 'trabajos:lista_trabajos' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-success">💾 Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

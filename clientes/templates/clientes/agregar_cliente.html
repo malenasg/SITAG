@@ -1,16 +1,119 @@
 {% extends 'base.html' %}
-{% load static %}
 
-{% block title %}Agregar Cliente - SITAG{% endblock %}
+{% block title %}Agregar Cliente | SITAG{% endblock %}
 
 {% block content %}
-<h2>Agregar Nuevo Cliente</h2>
+<div class="container mt-4">
+  <h2>Agregar Cliente</h2>
 
-<form method="POST">
+  <!-- Mensajes -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Errores por campo -->
+  {% if form.errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn-red">Guardar Cliente</button>
-</form>
 
-<a href="{% url 'inicio:inicio' %}">← Volver al inicio</a>
+    <!-- Tipo de Cliente -->
+    <div class="form-section">
+      <h3>Tipo de Cliente</h3>
+      <p>{{ form.tipo_cliente.label_tag }} {{ form.tipo_cliente }}</p>
+    </div>
+
+    <!-- Datos Persona Física -->
+    <div class="form-section" id="datos-fisica">
+      <h3>Datos Personales (Persona Física)</h3>
+      <p>{{ form.nombre.label_tag }} {{ form.nombre }}</p>
+      <p>{{ form.apellido.label_tag }} {{ form.apellido }}</p>
+      <p>{{ form.cuil.label_tag }} {{ form.cuil }}</p>
+    </div>
+
+    <!-- Datos Persona Jurídica -->
+    <div class="form-section" id="datos-juridica">
+      <h3>Datos de la Empresa (Persona Jurídica)</h3>
+      <p>{{ form.razon_social.label_tag }} {{ form.razon_social }}</p>
+      <p>{{ form.cuil.label_tag }} {{ form.cuil }}</p>
+    </div>
+
+    <!-- Datos de Contacto -->
+    <div class="form-section">
+      <h3>Datos de Contacto</h3>
+      <p>{{ form.telefono.label_tag }} {{ form.telefono }}</p>
+      <p>{{ form.email.label_tag }} {{ form.email }}</p>
+    </div>
+
+    <!-- Datos de Ubicación -->
+    <div class="form-section">
+      <h3>Datos de Ubicación</h3>
+      <p>{{ form.provincia.label_tag }} {{ form.provincia }}</p>
+      <p>{{ form.localidad.label_tag }} {{ form.localidad }}</p>
+      <p>{{ form.calle.label_tag }} {{ form.calle }}</p>
+      <p>{{ form.numero.label_tag }} {{ form.numero }}</p>
+      <p>{{ form.barrio.label_tag }} {{ form.barrio }}</p>
+      <p>{{ form.piso.label_tag }} {{ form.piso }}</p>
+      <p>{{ form.departamento.label_tag }} {{ form.departamento }}</p>
+      <p>{{ form.codigo_postal.label_tag }} {{ form.codigo_postal }}</p>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tipoSelect = document.getElementById("id_tipo_cliente");
+    const datosFisica = document.getElementById("datos-fisica");
+    const datosJuridica = document.getElementById("datos-juridica");
+
+    function actualizarFormulario() {
+        if (tipoSelect.value === "juridica") {
+            datosJuridica.style.display = "block";
+            datosFisica.style.display = "none";
+        } else {
+            datosJuridica.style.display = "none";
+            datosFisica.style.display = "block";
+        }
+    }
+
+    tipoSelect.addEventListener("change", actualizarFormulario);
+    actualizarFormulario(); // Al cargar la página
+});
+</script>
+
+<style>
+.form-section {
+    border: 1px solid #ddd;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+.form-section h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+</style>
 {% endblock %}
