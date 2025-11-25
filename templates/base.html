@@ -7,14 +7,22 @@
 
     {% load static %}
     <link rel="stylesheet" href="{% static 'inicio/styles.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
     <style>
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: Arial, sans-serif;
+            background-color: #ececec;
+        }
+
+        body {
             display: flex;
-            min-height: 100vh;
-            background-color: #f2f2f2;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* Sidebar */
@@ -26,7 +34,8 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 20px 0;
-            min-height: 100vh;
+            height: 100%;
+            box-sizing: border-box;
         }
 
         .sidebar img.logo {
@@ -36,11 +45,18 @@
             height: auto;
         }
 
+        .sidebar nav {
+            flex: 1;
+            overflow-y: auto;
+        }
+
         .sidebar nav a {
             color: white;
             text-decoration: none;
             padding: 12px 20px;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 5px;
             border-radius: 8px;
             transition: background 0.3s;
@@ -54,12 +70,12 @@
             background-color: #080d25;
         }
 
-        /* Botón de cerrar sesión */
         .inline-form { 
             display: flex; 
             justify-content: center; 
             padding: 20px;
         }
+
         .inline-form .btn {
             width: 180px;
             padding: 12px 24px;
@@ -71,7 +87,12 @@
             transition: all 0.2s ease-in-out;
             color: white;
             background-color: #b5b5c8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
         .inline-form .btn:hover {
             background-color: #424242ff;
             transform: translateY(-2px);
@@ -80,41 +101,69 @@
         /* Main content */
         main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
             padding: 30px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
         }
 
+        .main-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        footer {
+            margin-top: 0px;   
+            margin-bottom: 0px;    
+            padding: 5px 0;
+            text-align: center;
+            color: #555;
+            font-size: 1rem;   
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
         <div>
-            <!-- Logo -->
             <img class="logo" src="{% static 'img/logo-circulo.png' %}" alt="Logo SITAG">
-
-            <!-- Menú -->
             <nav>
-                <a href="{% url 'inicio:inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">Inicio</a>
-                <a href="{% url 'clientes:lista_clientes' %}" class="{% if request.resolver_match.url_name == 'lista_clientes' %}active{% endif %}">Clientes</a>
-                <a href="{% url 'trabajos:lista_trabajos' %}" class="{% if request.resolver_match.url_name == 'lista_trabajos' %}active{% endif %}">Trabajos</a>
+                <a href="{% url 'inicio:inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </a>
+                <a href="{% url 'clientes:lista_clientes' %}" class="{% if request.resolver_match.url_name == 'lista_clientes' %}active{% endif %}">
+                    <i class="fa-solid fa-users"></i> Clientes
+                </a>
+                <a href="{% url 'trabajos:lista_trabajos' %}" class="{% if request.resolver_match.url_name == 'lista_trabajos' %}active{% endif %}">
+                    <i class="fa-solid fa-briefcase"></i> Trabajos
+                </a>
                 {% if request.user.rol == 'administrador' %}
-                    <a href="{% url 'usuarios:lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">Usuarios</a>
+                    <a href="{% url 'usuarios:lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">
+                        <i class="fa-solid fa-user"></i> Usuarios
+                    </a>
                 {% endif %}
             </nav>
         </div>
 
-        <!-- Botón de cerrar sesión -->
         <form action="{% url 'logout' %}" method="post" class="inline-form">
             {% csrf_token %}
-            <button type="submit" class="btn">Cerrar sesión</button>
+            <button type="submit" class="btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+            </button>
         </form>
     </aside>
 
     <!-- Main content -->
     <main>
-        {% block content %}
-        {% endblock %}
-        <footer style="margin-top: 30px; text-align: center; color: #555;">
+        <div class="main-scroll">
+            {% block content %}{% endblock %}
+        </div>
+        <footer>
             &copy; {{ year }} SITAG
         </footer>
     </main>

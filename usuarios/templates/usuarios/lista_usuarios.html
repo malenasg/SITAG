@@ -4,21 +4,17 @@
 {% block title %}Usuarios | SITAG{% endblock %}
 
 {% block content %}
-<!-- Font Awesome para íconos -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-/* ====== Encabezado principal ====== */
+/* ====== Cabecera ====== */
 .usuarios-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
 }
-
 h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -28,17 +24,17 @@ h1 {
 
 /* ====== Botón Agregar ====== */
 .btn-agregar {
-  background-color: #22a745;
+  background-color: #508265;
   color: white;
   padding: 10px 18px;
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   transition: background-color 0.25s, transform 0.15s;
 }
 .btn-agregar:hover {
-  background-color: #1e8f3c;
+  background-color: #508265;
   transform: scale(1.03);
 }
 
@@ -49,9 +45,8 @@ h1 {
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-
 .tabla th {
   background-color: #f8f9fa;
   text-align: left;
@@ -59,19 +54,17 @@ h1 {
   font-weight: 600;
   color: #333;
 }
-
 .tabla td {
   padding: 14px 18px;
   border-top: 1px solid #eee;
   color: #444;
 }
-
 .tabla tr:hover {
   background-color: #f6fef7;
   transition: background-color 0.2s;
 }
 
-/* ====== Botones de acción ====== */
+/* ====== Botones acción ====== */
 .btn-accion {
   display: inline-flex;
   align-items: center;
@@ -83,30 +76,41 @@ h1 {
   font-weight: 500;
   transition: all 0.2s;
 }
-
 .btn-editar {
-  background-color: #2978cc;
+  background-color: #567e90;
   color: white;
 }
 .btn-editar:hover {
-  background-color: #3271c0;
+  background-color: #567e90;
+}
+.btn-desactivar {
+  background-color: #e9ecef;
+  color: #333;
+}
+.btn-desactivar:hover {
+  background-color: #d6d8da;
 }
 
-.btn-ver {
-  color: #6f42c1;
-  background-color: #f3e8ff;
+.btn-inactivos {
+  margin-top: 15px;
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
 }
-.btn-ver:hover {
-  background-color: #e6d5ff;
+.btn-inactivos:hover {
+  background-color: #5a6268;
 }
 </style>
 
-<!-- ====== CONTENIDO PRINCIPAL ====== -->
 <div class="usuarios-header">
-    <h1>Usuarios</h1>
-    <a href="{% url 'usuarios:crear_usuario' %}" class="btn-agregar">
-        + Crear Usuario
-    </a>
+  <h1>Usuarios</h1>
+  <a href="{% url 'usuarios:crear_usuario' %}" class="btn-agregar">
+    <i class="fa-solid fa-user-plus"></i> Crear Usuario
+  </a>
 </div>
 
 <table class="tabla">
@@ -115,7 +119,6 @@ h1 {
       <th>Usuario</th>
       <th>Email</th>
       <th>Rol</th>
-      <th>Activo</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -125,25 +128,32 @@ h1 {
         <td>{{ usuario.username }}</td>
         <td>{{ usuario.email }}</td>
         <td>{{ usuario.rol }}</td>
-        <td>{% if usuario.activo %}Sí{% else %}No{% endif %}</td>
         <td>
-            <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn-accion btn-editar">
-                <i class="fa-solid fa-pen-to-square"></i> Editar
+          <a href="{% url 'usuarios:editar_usuario' usuario.id %}" class="btn-accion btn-editar">
+            <i class="fa-solid fa-pen-to-square"></i> Editar
+          </a>
+
+          {% if usuario.is_active %}
+            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}"
+              class="btn-accion btn-desactivar"
+              onclick="return confirm('¿Seguro que querés desactivar este usuario?');">
+              <i class="fa-solid fa-user-slash"></i> Desactivar
             </a>
-            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}" class="btn-accion btn-ver">
-                <i class="fa-solid fa-eye-slash"></i> Desactivar
-            </a>
+          {% else %}
+            <span class="text-muted">Inactivo</span>
+          {% endif %}
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="5">No hay usuarios activos.</td></tr>
+      <tr>
+        <td colspan="5" style="text-align: center;">No hay usuarios activos.</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>
 
-<div class="btn-accion">
-  <a href="{% url 'usuarios:lista_usuarios_inactivos' %}" class="btn btn-outline-danger">
-    Ver usuarios inactivos
-  </a>
-</div>
+<a href="{% url 'usuarios:lista_usuarios_inactivos' %}" class="btn-inactivos">
+  Ver usuarios inactivos
+</a>
+
 {% endblock %}

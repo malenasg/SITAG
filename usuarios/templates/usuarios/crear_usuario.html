@@ -4,56 +4,171 @@
 {% block title %}Crear Usuario | SITAG{% endblock %}
 
 {% block content %}
-<div class="container mt-5 d-flex justify-content-center">
-    <div class="card shadow p-4" style="width: 100%; max-width: 600px; border-radius: 15px;">
-        <h3 class="text-center mb-4" style="color: #0a3d2e;">👤 Crear nuevo usuario</h3>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+<div class="page-wrapper">
+    <div class="form-card">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
         <form method="post">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="nombre_completo" class="form-label fw-bold">Nombre completo</label>
-                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" placeholder="Ej: Juan Pérez" required>
-            </div>
 
-            <div class="mb-3">
-                <label for="username" class="form-label fw-bold">Nombre de usuario</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Ej: jperez" required>
-            </div>
+            <!-- DATOS PERSONALES -->
+            <div class="section">
+                <h3>Datos del Usuario</h3>
 
-            <div class="mb-3">
-                <label for="email" class="form-label fw-bold">Correo electrónico</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="usuario@correo.com" required>
-            </div>
+                <label for="nombre_completo">Nombre completo</label>
+                <input type="text" id="nombre_completo" name="nombre_completo"
+                       placeholder="Ej: Juan Pérez" required>
 
-            <div class="mb-3">
-                <label for="rol" class="form-label fw-bold">Rol</label>
-                <select class="form-select" id="rol" name="rol" required>
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Ej: jperez" required>
+
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email"
+                       placeholder="usuario@correo.com" required>
+
+                <label for="rol">Rol</label>
+                <select id="rol" name="rol" required>
                     <option value="">Seleccionar rol...</option>
                     <option value="administrador">Administrador</option>
                     <option value="empleado">Empleado</option>
                 </select>
+
+                <div class="form-check" style="margin-bottom: 15px;">
+                    <input type="checkbox" id="activo" name="activo" checked>
+                    <label for="activo" style="margin-left: 8px; font-weight:600;">Usuario activo</label>
+                </div>
             </div>
 
-            <div class="form-check mb-4">
-                <input type="checkbox" class="form-check-input" id="activo" name="activo" checked>
-                <label class="form-check-label fw-bold" for="activo">Usuario activo</label>
-            </div>
-            
-            <div class="mb-3">
-                <label for="password1" class="form-label fw-bold">Contraseña</label>
-                <input type="password" class="form-control" id="password1" name="password1" placeholder="Ingrese una contraseña" required>
+            <!-- CONTRASEÑA -->
+            <div class="section">
+                <h3>Contraseña</h3>
+
+                <label for="password1">Contraseña</label>
+                <input type="password" id="password1" name="password1"
+                       placeholder="Ingrese una contraseña" required>
+
+                <label for="password2">Confirmar contraseña</label>
+                <input type="password" id="password2" name="password2"
+                       placeholder="Repita la contraseña" required>
             </div>
 
-            <div class="mb-3">
-                <label for="password2" class="form-label fw-bold">Confirmar contraseña</label>
-                <input type="password" class="form-control" id="password2" name="password2" placeholder="Repita la contraseña" required>
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <a href="{% url 'usuarios:lista_usuarios' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
-                <button type="submit" class="btn btn-success px-4">Crear usuario</button>
-            </div>
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-floppy-disk"></i> Crear Usuario
+            </button>
         </form>
+
+        <a href="{% url 'usuarios:lista_usuarios' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
     </div>
 </div>
+
+<!-- MISMO CSS QUE AGREGAR CLIENTE / TRABAJO -->
+<style>
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    padding: 45px 50px;
+    border-radius: 16px;
+    box-shadow: 0 5px 22px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section {
+    background: #f7f7f7;
+    padding: 28px 26px;
+    border-radius: 14px;
+    border: 1px solid #e1e1e1;
+    margin-bottom: 5px;
+}
+
+.section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: #3c3c3c;
+}
+
+label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.97rem;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 22px;
+    border: 1px solid #c7c7c7;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #508265;
+    box-shadow: 0 0 6px rgba(80,130,101,0.4);
+    outline: none;
+}
+
+.form-check input {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-save {
+    background: #508265;
+    color: white;
+    padding: 16px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    background: #406a52;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 0;
+    transition: 0.25s;
+}
+
+.btn-back:hover {
+    color: #508265;
+}
+</style>
+
 {% endblock %}

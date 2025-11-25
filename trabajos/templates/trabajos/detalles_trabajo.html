@@ -4,50 +4,196 @@
 {% block title %}Detalle Trabajo | SITAG{% endblock %}
 
 {% block content %}
-<h1>Detalle del Trabajo</h1>
+<style>
+/* ---------- ESTILO MODERNO 2025 ---------- */
 
-<div style="background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); max-width:700px; margin-bottom:20px;">
-    <h2>{{ trabajo.titulo }}</h2>
-    <p><strong>Descripción:</strong> {{ trabajo.descripcion }}</p>
-    <p><strong>Estado:</strong> {{ trabajo.estado }}</p>
-    <p><strong>Fecha de inicio:</strong> {{ trabajo.fecha_inicio }}</p>
+.detail-wrapper {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 10px;
+}
+
+.section-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+}
+
+.section-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    font-size: 1.4rem;
+    color: #4c7a63;
+}
+
+.data-item {
+    margin-bottom: 14px;
+}
+
+.data-item strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.data-item span {
+    font-size: 1.05rem;
+    color: #333;
+}
+
+/* Listas modernas */
+.modern-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modern-list li {
+    padding: 14px 0;
+    border-bottom: 1px solid #ececec;
+}
+
+.modern-list li:last-child {
+    border-bottom: none;
+}
+
+.modern-list strong {
+    color: #222;
+    font-size: 1.05rem;
+}
+
+.modern-list p {
+    margin: 4px 0 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn-modern {
+    display: inline-block;
+    background: #4c7a63;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s;
+}
+
+.btn-modern:hover {
+    background: #3a624f;
+}
+</style>
+
+
+<div class="detail-wrapper">
+
+    <!-- DATOS PRINCIPALES -->
+    <div class="section-card">
+        <h2 class="section-title"><i class="fa-solid fa-clipboard-list"></i> Detalle del trabajo</h2>
+
+        <div class="data-item">
+            <strong>Título</strong>
+            <span>{{ trabajo.titulo }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Descripción</strong>
+            <span>{{ trabajo.descripcion }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Estado</strong>
+            <span>{{ trabajo.estado }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Fecha de inicio</strong>
+            <span>{{ trabajo.fecha_inicio }}</span>
+        </div>
+    </div>
+
+
+    <!-- CLIENTE -->
+    <div class="section-card">
+        <h2 class="section-title"><i class="fa-solid fa-user"></i> Cliente</h2>
+
+        <div class="data-item">
+            <strong>Nombre</strong>
+            <span>{{ cliente.nombre }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Teléfono</strong>
+            <span>{{ cliente.telefono }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Email</strong>
+            <span>{{ cliente.email }}</span>
+        </div>
+
+        <div class="data-item">
+            <strong>Dirección</strong>
+            <span>{{ cliente.direccion }}</span>
+        </div>
+    </div>
+
+
+    <!-- PLANOS -->
+    <div class="section-card">
+        <h2 class="section-title"><i class="fa-solid fa-ruler-combined"></i> Planos asociados</h2>
+
+        {% if planos %}
+            <ul class="modern-list">
+                {% for plano in planos %}
+                    <li>
+                        <strong>{{ plano.nombre }}</strong>
+                        <p>{{ plano.descripcion }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No hay planos asociados.</p>
+        {% endif %}
+    </div>
+
+
+    <!-- CUENTAS -->
+    <div class="section-card">
+        <h2 class="section-title"><i class="fa-solid fa-money-bill"></i> Cuentas asociadas</h2>
+
+        {% if cuentas %}
+            <ul class="modern-list">
+                {% for cuenta in cuentas %}
+                    <li>
+                        <strong>{{ cuenta.descripcion }}</strong>
+                        <p>Monto: ${{ cuenta.monto }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No hay cuentas asociadas.</p>
+        {% endif %}
+    </div>
+
+    <!-- VOLVER -->
+    <div class="text-end mt-3">
+        <a href="{% url 'trabajos:lista_trabajos' %}" class="btn-modern">
+            ← Volver
+        </a>
+    </div>
+
 </div>
 
-<div style="background:#f7f7f7; padding:15px; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.05); max-width:700px; margin-bottom:20px;">
-    <h3>Cliente</h3>
-    <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
-    <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
-    <p><strong>Email:</strong> {{ cliente.email }}</p>
-    <p><strong>Dirección:</strong> {{ cliente.direccion }}</p>
-</div>
-
-<div style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.05); max-width:700px; margin-bottom:20px;">
-    <h3>Planos asociados</h3>
-    {% if planos %}
-        <ul>
-            {% for plano in planos %}
-                <li>{{ plano.nombre }} - {{ plano.descripcion }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay planos asociados.</p>
-    {% endif %}
-</div>
-
-<div style="background:#f7f7f7; padding:15px; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.05); max-width:700px; margin-bottom:20px;">
-    <h3>Cuentas asociadas</h3>
-    {% if cuentas %}
-        <ul>
-            {% for cuenta in cuentas %}
-                <li>{{ cuenta.descripcion }} - ${{ cuenta.monto }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay cuentas asociadas.</p>
-    {% endif %}
-</div>
-
-<a href="{% url 'trabajos:lista_trabajos' %}" style="display:inline-block; padding:8px 12px; background:#2978cc; color:white; border-radius:8px; text-decoration:none;">
-    Volver a Trabajos
-</a>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Usuario
+from .forms import UsuarioForm
 
 Usuario = get_user_model()
 
@@ -66,21 +66,38 @@ def crear_usuario(request):
     return render(request, "usuarios/crear_usuario.html")
 
 def editar_usuario(request, id):
-    return redirect('usuarios:lista_usuarios')
+    usuario = get_object_or_404(Usuario, id=id)
 
-def lista_usuarios_inactivos(request):
-    usuarios = Usuario.objects.filter(activo=False)
-    return render(request, 'usuarios/lista_inactivos.html', {'usuarios': usuarios})
+    if request.method == "POST":
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuario actualizado correctamente.")
+            return redirect('usuarios:lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
+
+def lista_usuarios(request):
+    usuarios = Usuario.objects.filter(is_active=True)
+    return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
 
 def desactivar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
-    usuario.is_active = False  
+    usuario.is_active = False
     usuario.save()
+    messages.info(request, f"El usuario {usuario.username} fue desactivado.")
     return redirect('usuarios:lista_usuarios')
+
 
 def activar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
-    usuario.activo = True
-    usuario.is_active = True 
+    usuario.is_active = True
     usuario.save()
+    messages.success(request, f"El usuario {usuario.username} fue reactivado.")
     return redirect('usuarios:lista_usuarios_inactivos')
+
+def lista_usuarios_inactivos(request):
+    usuarios = Usuario.objects.filter(is_active=False)
+    return render(request, 'usuarios/lista_inactivos.html', {'usuarios': usuarios})

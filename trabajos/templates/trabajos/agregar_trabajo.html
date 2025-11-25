@@ -1,97 +1,176 @@
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}Agregar Trabajo | SITAG{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-primary text-white rounded-top-4">
-            <h4 class="mb-0">➕ Crear nuevo trabajo</h4>
-        </div>
-        <div class="card-body p-4">
-            <form method="POST">
-                {% csrf_token %}
-                
-                <!-- Mensajes -->
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-                
-                <!-- Sección: Datos del trabajo -->
-                <h5 class="mb-3 text-primary">🧾 Datos del trabajo</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Cliente</label>
-                        {{ trabajo_form.cliente }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Responsable</label>
-                        {{ trabajo_form.responsable }}
-                    </div>
-                </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-                <div class="mb-3">
-                    <label class="form-label">Título</label>
-                    {{ trabajo_form.titulo }}
-                </div>
+<div class="page-wrapper">
+    <div class="form-card">
 
-                <div class="mb-3">
-                    <label class="form-label">Descripción</label>
-                    {{ trabajo_form.descripcion }}
-                </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Estado</label>
-                        {{ trabajo_form.estado }}
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Visible</label>
-                        {{ trabajo_form.visible }}
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Fecha de inicio</label>
-                        {{ trabajo_form.fecha_inicio }}
-                    </div>
-                </div>
+        <form method="post">
+            {% csrf_token %}
 
-                <hr>
+            <!-- DATOS DEL TRABAJO -->
+            <div class="section">
+                <h3>Datos del Trabajo</h3>
 
-                <!-- Sección: Ubicación -->
-                <h5 class="mb-3 text-primary">📍 Ubicación</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Calle</label>
-                        {{ ubicacion_form.calle }}
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Número</label>
-                        {{ ubicacion_form.numero }}
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Barrio</label>
-                        {{ ubicacion_form.barrio }}
-                    </div>
-                </div>
+                <label for="{{ trabajo_form.cliente.id_for_label }}">Cliente</label>
+                {{ trabajo_form.cliente }}
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Ciudad</label>
-                        {{ ubicacion_form.ciudad }}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Nomenclatura catastral</label>
-                        {{ ubicacion_form.nomenclatura_catastral }}
-                    </div>
-                </div>
+                <label for="{{ trabajo_form.responsable.id_for_label }}">Responsable</label>
+                {{ trabajo_form.responsable }}
 
-                <div class="d-flex justify-content-end mt-4">
-                    <a href="{% url 'trabajos:lista_trabajos' %}" class="btn btn-secondary me-2">Cancelar</a>
-                    <button type="submit" class="btn btn-success">💾 Guardar trabajo</button>
-                </div>
-            </form>
-        </div>
+                <label for="{{ trabajo_form.titulo.id_for_label }}">Título</label>
+                {{ trabajo_form.titulo }}
+
+                <label for="{{ trabajo_form.descripcion.id_for_label }}">Descripción</label>
+                {{ trabajo_form.descripcion }}
+
+                <label for="{{ trabajo_form.estado.id_for_label }}">Estado</label>
+                {{ trabajo_form.estado }}
+
+                <label for="{{ trabajo_form.visible.id_for_label }}">Visible</label>
+                {{ trabajo_form.visible }}
+
+                <label for="{{ trabajo_form.fecha_inicio.id_for_label }}">Fecha de inicio</label>
+                {{ trabajo_form.fecha_inicio }}
+            </div>
+
+            <!-- UBICACIÓN -->
+            <div class="section">
+                <h3>Datos de Ubicación</h3>
+
+                <label for="{{ ubicacion_form.calle.id_for_label }}">Calle</label>
+                {{ ubicacion_form.calle }}
+
+                <label for="{{ ubicacion_form.numero.id_for_label }}">Número</label>
+                {{ ubicacion_form.numero }}
+
+                <label for="{{ ubicacion_form.barrio.id_for_label }}">Barrio</label>
+                {{ ubicacion_form.barrio }}
+
+                <label for="{{ ubicacion_form.ciudad.id_for_label }}">Ciudad</label>
+                {{ ubicacion_form.ciudad }}
+
+                <label for="{{ ubicacion_form.nomenclatura_catastral.id_for_label }}">Nomenclatura catastral</label>
+                {{ ubicacion_form.nomenclatura_catastral }}
+            </div>
+
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Trabajo
+            </button>
+        </form>
+
+        <a href="{% url 'trabajos:lista_trabajos' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
     </div>
 </div>
+
+<!-- MISMO CSS QUE AGREGAR CLIENTE -->
+<style>
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    padding: 45px 50px;
+    border-radius: 16px;
+    box-shadow: 0 5px 22px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section {
+    background: #f7f7f7;
+    padding: 28px 26px;
+    border-radius: 14px;
+    border: 1px solid #e1e1e1;
+    margin-bottom: 5px;
+}
+
+.section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: #3c3c3c;
+}
+
+label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.97rem;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 22px;
+    border: 1px solid #c7c7c7;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+    min-height: 120px;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #508265;
+    box-shadow: 0 0 6px rgba(80,130,101,0.4);
+    outline: none;
+}
+
+.btn-save {
+    background: #508265;
+    color: white;
+    padding: 16px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    background: #406a52;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 0;
+    transition: 0.25s;
+}
+
+.btn-back:hover {
+    color: #508265;
+}
+</style>
+
 {% endblock %}

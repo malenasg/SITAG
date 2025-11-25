@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Usuario | SITAG{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="form-card">
+
+        <h2 class="form-title">Editar Usuario: {{ usuario.username }}</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="section">
+                <h3>Datos del Usuario</h3>
+
+                <label>Usuario</label>
+                {{ form.username }}
+
+                <label>Email</label>
+                {{ form.email }}
+
+                <label>Rol</label>
+                {{ form.rol }}
+
+                <label>Activo</label>
+                {{ form.activo }}
+            </div>
+
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+            </button>
+        </form>
+
+        <a href="{% url 'usuarios:lista_usuarios' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
+    </div>
+</div>
+
+<style>
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    padding: 45px 50px;
+    border-radius: 16px;
+    box-shadow: 0 5px 22px rgba(0,0,0,0.10);
+}
+
+.form-title {
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #3c3c3c;
+}
+
+.section {
+    background: #f7f7f7;
+    padding: 28px 26px;
+    border-radius: 14px;
+    border: 1px solid #e1e1e1;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 22px;
+    border: 1px solid #c7c7c7;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.btn-save {
+    background: #508265;
+    color: white;
+    padding: 16px 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+}
+</style>
+{% endblock %}

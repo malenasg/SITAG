@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .models import Cliente
 from .forms import ClienteForm
-from django.contrib import messages
 
 # Lista clientes
 def lista_clientes(request):
@@ -19,6 +19,7 @@ def agregar_cliente(request):
             messages.success(request, "Cliente agregado correctamente")
             return redirect('clientes:lista_clientes')
         else:
+            # Los errores ahora aparecerán directamente sobre los campos
             messages.error(request, "Por favor corrija los errores del formulario")
     else:
         form = ClienteForm()

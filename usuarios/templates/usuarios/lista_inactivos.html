@@ -4,40 +4,127 @@
 {% block title %}Usuarios Inactivos | SITAG{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h3 class="text-center mb-4" style="color:#8B0000;">🚫 Usuarios inactivos</h3>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    {% if usuarios %}
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-danger">
-                    <tr>
-                        <th>Nombre completo</th>
-                        <th>Usuario</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for usuario in usuarios %}
-                    <tr>
-                        <td>{{ usuario.nombre_completo }}</td>
-                        <td>{{ usuario.username }}</td>
-                        <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.rol }}</td>
-                        <td><span class="badge bg-danger">Inactivo</span></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p class="text-center mt-4 text-muted">No hay usuarios inactivos.</p>
-    {% endif %}
+<style>
+/* ====== Cabecera ====== */
+.usuarios-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
 
-    <div class="text-center mt-4">
-        <a href="{% url 'usuarios:lista_usuarios' %}" class="btn btn-outline-secondary">Volver a la lista activa</a>
-    </div>
+/* ====== Tabla ====== */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.tabla th {
+  background-color: #f8f9fa;
+  text-align: left;
+  padding: 12px 18px;
+  font-weight: 600;
+  color: #333;
+}
+.tabla td {
+  padding: 14px 18px;
+  border-top: 1px solid #eee;
+  color: #444;
+}
+.tabla tr:hover {
+  background-color: #fff5f5; /* rojo suave */
+  transition: background-color 0.2s;
+}
+
+/* ====== Botones ====== */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+/* Botón activar */
+.btn-activar {
+  background-color: #22a745;
+  color: white;
+}
+.btn-activar:hover {
+  background-color: #1e8f3c;
+}
+
+/* Volver */
+.btn-volver {
+  margin-top: 15px;
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+}
+.btn-volver:hover {
+  background-color: #5a6268;
+}
+</style>
+
+<div class="usuarios-header">
+  <h1>Usuarios Inactivos</h1>
 </div>
+
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Usuario</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th>Opciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for usuario in usuarios %}
+      <tr>
+        <td>{{ usuario.username }}</td>
+        <td>{{ usuario.email }}</td>
+        <td>{{ usuario.get_rol_display }}</td>
+
+        <td>
+          <a href="{% url 'usuarios:activar_usuario' usuario.id %}"
+             class="btn-accion btn-activar"
+             onclick="return confirm('¿Seguro que querés activar este usuario?');">
+            <i class="fa-solid fa-user-check"></i> Activar
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" style="text-align: center;">No hay usuarios inactivos.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'usuarios:lista_usuarios' %}" class="btn-volver">
+  <i class="fa-solid fa-arrow-left"></i> Volver a usuarios activos
+</a>
+
 {% endblock %}
