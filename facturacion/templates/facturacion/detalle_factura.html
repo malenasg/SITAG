@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Factura | SITAG{% endblock %}
+
+{% block content %}
+<h2>Detalle de Factura #{{ factura.id }}</h2>
+
+<table class="tabla-detalle">
+  <tr>
+    <th>Cliente:</th>
+    <td>{{ factura.cliente }}</td>
+  </tr>
+  <tr>
+    <th>Trabajo:</th>
+    <td>{{ factura.trabajo }}</td>
+  </tr>
+  <tr>
+    <th>Costo total:</th>
+    <td>${{ factura.costo_total }}</td>
+  </tr>
+  <tr>
+    <th>Pagado:</th>
+    <td>${{ factura.pagado_total }}</td>
+  </tr>
+  <tr>
+    <th>Saldo:</th>
+    <td>${{ factura.saldo }}</td>
+  </tr>
+  <tr>
+    <th>Estado:</th>
+    <td>{{ factura.estado }}</td>
+  </tr>
+</table>
+
+<h3>Pagos registrados</h3>
+<table class="tabla">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Monto</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pago in factura.pago_set.all %}
+    <tr>
+      <td>{{ pago.fecha }}</td>
+      <td>${{ pago.monto_pagado }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2" style="text-align:center;">No hay pagos registrados.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'facturacion:registrar_pago' factura.id %}" class="btn-agregar">
+    <i class="fa-solid fa-money-bill-wave"></i> Registrar Pago
+</a>
+<a href="{% url 'facturacion:lista_facturas' %}" class="btn-cancelar">
+    <i class="fa-solid fa-arrow-left"></i> Volver
+</a>
+{% endblock %}

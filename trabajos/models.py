@@ -19,11 +19,10 @@ class Ubicacion(models.Model):
 class Trabajo(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='trabajos')
     titulo = models.CharField(max_length=250, blank=True)   
-    descripcion = models.TextField()
+    descripcion = models.TextField(max_length=200)
     fecha_inicio = models.DateField(null=True, blank=True)
     fecha_fin = models.DateField(null=True, blank=True)     
-    estado = models.CharField(
-        max_length=20,
+    estado = models.CharField(max_length=20,
         choices=[
             ("Pendiente", "Pendiente"),
             ("En curso", "En curso"),
@@ -33,6 +32,8 @@ class Trabajo(models.Model):
     )
     visible = models.BooleanField(default=True)
 
+    costo_total = models.DecimalField(max_digits=12, decimal_places=2)
+    
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True, blank=True, related_name='trabajos')
     responsable = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name='trabajos_responsable')
 
@@ -42,6 +43,24 @@ class Trabajo(models.Model):
     def __str__(self):
         titulo = self.titulo or (self.descripcion[:30] + '...')
         return f"{titulo} - {self.cliente.nombre}"
+    
+    @property
+    def pagado_total(self):
+        return sum(p.monto for p in self.pagos.all())
+
+    @property
+    def saldo(self):
+        factura = getattr(self, 'factura', None)
+        if factura:
+            return factura.saldo
+        return self.costo_total  # Si no hay factura creada
+
+    @property
+    def estado_facturacion(self):
+        factura = getattr(self, 'factura', None)
+        if factura:
+            return factura.estado
+        return "SIN FACTURA"
 
 
 class Plano(models.Model):
@@ -49,30 +68,7 @@ class Plano(models.Model):
     descripcion = models.CharField(max_length=255)
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.CASCADE, related_name='planos')
     trabajo = models.ForeignKey(Trabajo, on_delete=models.CASCADE, related_name='planos')
-    archivo = models.FileField(upload_to='planos/', null=True, blank=True)  # opcional para almacenar el PDF/DWG
+    archivo = models.FileField(upload_to='planos/', null=True, blank=True)
 
     def __str__(self):
         return f"Plano {self.id} - {self.trabajo.titulo or self.trabajo.descripcion[:20]}"
-
-
-class Cuenta(models.Model):
-    ESTADOS = [
-        ('pendiente', 'Pendiente'),
-        ('pagado', 'Pagado'),
-        ('parcial', 'Parcial'),
-    ]
-
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='cuentas')
-    trabajo = models.ForeignKey(Trabajo, on_delete=models.CASCADE, related_name='cuentas')
-    costo_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    monto_pagado = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    saldo_pendiente = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
-    fecha_creacion = models.DateField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        self.saldo_pendiente = max(self.costo_total - self.monto_pagado, 0)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Cuenta #{self.id} - {self.cliente.nombre}"

@@ -37,17 +37,6 @@ def inicio(request):
     }
     return render(request, 'inicio/inicio.html', context)
 
-# Agregar cliente
-def agregar_cliente(request):
-    if request.method == "POST":
-        nombre = request.POST.get("nombre")
-        email = request.POST.get("email")
-        telefono = request.POST.get("telefono")
-        Cliente.objects.create(nombre=nombre, email=email, telefono=telefono)
-        return redirect('inicio:inicio')
-    return render(request, 'inicio/agregar_cliente.html')
-
-
 # Trabajos pendientes
 def trabajos_pendientes(request):
     hoy = datetime.today()

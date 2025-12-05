@@ -19,9 +19,8 @@ urlpatterns = [
     path('clientes/', include(('clientes.urls', 'clientes'), namespace='clientes')),
     path('trabajos/', include(('trabajos.urls', 'trabajos'), namespace='trabajos')),
     path('usuarios/', include(('usuarios.urls', 'usuarios'), namespace='usuarios')),
+    path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
 
-    # opcional (autenticación por defecto de Django)
-    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 

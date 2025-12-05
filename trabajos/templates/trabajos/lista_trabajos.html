@@ -16,7 +16,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 h1 {
@@ -38,34 +38,54 @@ h1 {
   transition: background-color 0.25s, transform 0.15s;
 }
 .btn-agregar:hover {
-  background-color: #508265;
+  background-color: #406a52;
   transform: scale(1.03);
 }
 
-/* ====== Tabla ====== */
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+/* ====== Input búsqueda ====== */
+.input-busqueda {
+  width: 97.7%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: 0.25s;
+  margin-bottom: 20px;
+}
+.input-busqueda:focus {
+  border-color: #508265;
+  box-shadow: 0 0 6px rgba(80,130,101,0.4);
+  outline: none;
 }
 
+/* ====== Tabla con scroll ====== */
+.tabla-wrapper {
+  max-height: 450px; /* altura de scroll */
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid #e1e1e1;
+}
+.tabla {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: #fff;
+}
 .tabla th {
   background-color: #f8f9fa;
   text-align: left;
   padding: 12px 18px;
   font-weight: 600;
   color: #333;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
-
 .tabla td {
   padding: 14px 18px;
   border-top: 1px solid #eee;
   color: #444;
 }
-
 .tabla tr:hover {
   background-color: #f6fef7;
   transition: background-color 0.2s;
@@ -89,7 +109,7 @@ h1 {
   color: white;
 }
 .btn-editar:hover {
-  background-color: #567e90;
+  background-color: #456977;
 }
 
 .btn-ver {
@@ -105,46 +125,68 @@ h1 {
 <div class="trabajos-header">
   <h1>Trabajos</h1>
   <a href="{% url 'trabajos:agregar_trabajos' %}" class="btn-agregar">
-    Agregar Trabajos
+      <i class="fa-solid fa-file-circle-plus"></i> Agregar trabajo
   </a>
 </div>
 
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Trabajos</th>
-      <th>Descripción</th>
-      <th>Estado</th>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for trabajo in trabajos %}
+<!-- Input búsqueda -->
+<input type="text" id="searchInput" placeholder="Buscar trabajo (Título, Descripción, Estado)" class="input-busqueda">
+
+<!-- Tabla con scroll -->
+<div class="tabla-wrapper">
+  <table class="tabla" id="trabajosTabla">
+    <thead>
       <tr>
-        <td>{{ trabajo.titulo }}</td>
-        <td>{{ trabajo.descripcion }}</td>
-        <td>{{ trabajo.estado }}</td>
-        <td>
-          <a href="{% url 'trabajos:editar_trabajo' trabajo.id %}" class="btn-accion btn-editar">
-            <i class="fa-solid fa-pen-to-square"></i> Editar
-          </a>
-          <a href="{% url 'trabajos:detalle_trabajo' trabajo_id=trabajo.id %}" class="btn-accion btn-ver">
-            <i class="fa-solid fa-eye"></i> Ver
-        </a>
-
-
-        </td>
+        <th>Trabajo</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Opciones</th>
       </tr>
-    {% empty %}
-      <tr><td colspan="4">No hay trabajos cargados.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for trabajo in trabajos %}
+        <tr>
+          <td>{{ trabajo.titulo }}</td>
+          <td>{{ trabajo.descripcion }}</td>
+          <td>{{ trabajo.estado }}</td>
+          <td>
+            <a href="{% url 'trabajos:editar_trabajo' trabajo.id %}" class="btn-accion btn-editar">
+              <i class="fa-solid fa-pen-to-square"></i> Editar
+            </a>
+            <a href="{% url 'trabajos:detalle_trabajo' trabajo_id=trabajo.id %}" class="btn-accion btn-ver">
+              <i class="fa-solid fa-eye"></i> Ver
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" style="text-align:center;">No hay trabajos cargados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- JS búsqueda -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchInput");
+    const table = document.getElementById("trabajosTabla");
+    const rows = table.getElementsByTagName("tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const filter = searchInput.value.toLowerCase();
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName("td");
+            let match = false;
+            for (let j = 0; j < 3; j++) { // Título, descripción, estado
+                if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+                    match = true;
+                    break;
+                }
+            }
+            rows[i].style.display = match ? "" : "none";
+        }
+    });
+});
+</script>
+
 {% endblock %}
-
-
-
-
-
-
-

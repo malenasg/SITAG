@@ -152,21 +152,30 @@
 
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <div class="logo-section">
       <img class="logo-img" src="{% static 'img/logo-sitag.png' %}" alt="Logo SITAG">
     </div>
-
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
-          {{ message }}
-        </div>
+    
+  {% if form.non_field_errors %}
+    <div class="alert alert-error">
+      {% for error in form.non_field_errors %}
+        {{ error }}
       {% endfor %}
-    {% endif %}
+    </div>
+  {% endif %}
 
-    <form method="post" action="{% url 'login' %}">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  
+    <form method="post" action="{% url 'usuarios:login' %}">
       {% csrf_token %}
 
       <div class="form-group">

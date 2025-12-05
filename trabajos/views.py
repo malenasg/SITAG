@@ -1,18 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from datetime import date, timedelta
 from clientes.models import Cliente
-from trabajos.models import Trabajo, Ubicacion, Plano, Cuenta
+from trabajos.models import Trabajo, Ubicacion, Plano
+from facturacion.models import Factura
 from .forms import TrabajoForm, UbicacionForm
 
-
-
-# 🔹 Lista de trabajos
 def lista_trabajos(request):
     trabajos = Trabajo.objects.filter(visible=True)
     clientes = Cliente.objects.filter(activo=True)
 
-    # Filtros
     cliente_id = request.GET.get('cliente')
     estado = request.GET.get('estado')
     palabra = request.GET.get('buscar')
@@ -32,7 +28,6 @@ def lista_trabajos(request):
     })
 
 
-# 🔹 Ocultar un trabajo (marcar visible=False)
 def ocultar_trabajo(request, id):
     trabajo = get_object_or_404(Trabajo, id=id)
     trabajo.visible = False
@@ -41,13 +36,9 @@ def ocultar_trabajo(request, id):
     return redirect('trabajos:lista_trabajos')
 
 
-# 🔹 Editar un trabajo existente
 def editar_trabajo(request, trabajo_id):
     trabajo = get_object_or_404(Trabajo, id=trabajo_id)
-    if trabajo.ubicacion:
-        ubicacion = trabajo.ubicacion
-    else:
-        ubicacion = Ubicacion()
+    ubicacion = trabajo.ubicacion or Ubicacion()
 
     if request.method == "POST":
         trabajo_form = TrabajoForm(request.POST, instance=trabajo)
@@ -69,22 +60,22 @@ def editar_trabajo(request, trabajo_id):
         'trabajo': trabajo,
     })
 
-# 🔹 Detalle de un trabajo (cliente, planos, cuentas)
+
 def detalle_trabajo(request, trabajo_id):
     trabajo = get_object_or_404(Trabajo, id=trabajo_id)
     cliente = trabajo.cliente
     planos = Plano.objects.filter(trabajo=trabajo)
-    cuentas = Cuenta.objects.filter(trabajo=trabajo)
+    facturas = Factura.objects.filter(trabajo=trabajo)  # Todas las facturas del trabajo
 
     return render(request, 'trabajos/detalles_trabajo.html', {
         'trabajo': trabajo,
         'cliente': cliente,
         'planos': planos,
-        'cuentas': cuentas,
+        'facturas': facturas,  # Se pasa al template
     })
 
 
-# 🔹 Agregar nuevo trabajo + ubicación
+
 def agregar_trabajo(request):
     if request.method == 'POST':
         trabajo_form = TrabajoForm(request.POST)
@@ -95,10 +86,10 @@ def agregar_trabajo(request):
             trabajo = trabajo_form.save(commit=False)
             trabajo.ubicacion = ubicacion
             trabajo.save()
-            messages.success(request, "Trabajo creado correctamente.")
+            messages.success(request, "Se guardaron los datos correctamente.")
             return redirect('trabajos:lista_trabajos')
         else:
-            messages.error(request, "Por favor, corregí los errores del formulario.")
+            messages.error(request, "Faltan completar campos, revise e intente nuevamente.")
     else:
         trabajo_form = TrabajoForm()
         ubicacion_form = UbicacionForm()

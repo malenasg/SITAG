@@ -39,3 +39,16 @@ class UsuarioForm(forms.ModelForm):
             'rol': forms.Select(attrs={'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+class CustomLoginForm(AuthenticationForm):
+    error_messages = {
+        "invalid_login": (
+            "Usuario/contraseña incorrectos. Inténtelo de nuevo."
+        ),
+        "inactive": (
+            "Esta cuenta está inactiva. Comuníquese con administración."
+        ),
+    }

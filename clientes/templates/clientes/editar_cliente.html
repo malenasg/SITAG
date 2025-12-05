@@ -8,7 +8,7 @@
 <div class="page-wrapper">
     <div class="form-card">
 
-        <h2 class="form-title">Editar Cliente</h2>
+        <h2 class="form-title">Editar cliente</h2>
 
         {% if messages %}
             {% for message in messages %}
@@ -33,7 +33,7 @@
 
             <!-- TIPO -->
             <div class="section">
-                <h3>Tipo de Cliente</h3>
+                <h3>Tipo de cliente</h3>
 
                 <label for="{{ form.tipo_cliente.id_for_label }}">Seleccione tipo:</label>
                 {{ form.tipo_cliente }}
@@ -41,7 +41,7 @@
 
             <!-- PERSONA FÍSICA -->
             <div class="section" id="datos-fisica">
-                <h3>Datos Personales (Persona Física)</h3>
+                <h3>Datos personales</h3>
 
                 <label for="{{ form.nombre.id_for_label }}">Nombre</label>
                 {{ form.nombre }}
@@ -55,9 +55,9 @@
 
             <!-- PERSONA JURÍDICA -->
             <div class="section" id="datos-juridica">
-                <h3>Datos de la Empresa (Persona Jurídica)</h3>
+                <h3>Datos de la empresa</h3>
 
-                <label for="{{ form.razon_social.id_for_label }}">Razón Social</label>
+                <label for="{{ form.razon_social.id_for_label }}">Razón social</label>
                 {{ form.razon_social }}
 
                 <label for="{{ form.cuil.id_for_label }}">CUIT</label>
@@ -66,7 +66,7 @@
 
             <!-- CONTACTO -->
             <div class="section">
-                <h3>Datos de Contacto</h3>
+                <h3>Datos de contacto</h3>
 
                 <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
                 {{ form.telefono }}
@@ -77,13 +77,20 @@
 
             <!-- UBICACIÓN -->
             <div class="section">
-                <h3>Datos de Ubicación</h3>
+                <h3>Datos de ubicación</h3>
 
                 <label for="{{ form.provincia.id_for_label }}">Provincia</label>
                 {{ form.provincia }}
 
-                <label for="{{ form.localidad.id_for_label }}">Localidad</label>
-                {{ form.localidad }}
+                <label for="departamento">Departamento</label>
+                <select id="departamento" name="departamento" required>
+                    <option value="">Selecciona un departamento</option>
+                </select>
+
+                <label for="localidad">Localidad</label>
+                <select id="localidad" name="localidad" required>
+                    <option value="">Selecciona una localidad</option>
+                </select>
 
                 <label for="{{ form.calle.id_for_label }}">Calle</label>
                 {{ form.calle }}
@@ -94,15 +101,84 @@
                 <label for="{{ form.barrio.id_for_label }}">Barrio</label>
                 {{ form.barrio }}
 
-                <label for="{{ form.piso.id_for_label }}">Piso</label>
+                <label for="{{ form.piso.id_for_label }}">Piso/Depto</label>
                 {{ form.piso }}
 
-                <label for="{{ form.departamento.id_for_label }}">Departamento</label>
-                {{ form.departamento }}
-
-                <label for="{{ form.codigo_postal.id_for_label }}">Código Postal</label>
+                <label for="{{ form.codigo_postal.id_for_label }}">Código postal</label>
                 {{ form.codigo_postal }}
             </div>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // --- Tipo cliente ---
+                const tipo = document.getElementById("id_tipo_cliente");
+                const fisica = document.getElementById("datos-fisica");
+                const juridica = document.getElementById("datos-juridica");
+
+                function actualizar() {
+                    if (tipo.value === "juridica") {
+                        fisica.style.display = "none";
+                        juridica.style.display = "block";
+                    } else {
+                        juridica.style.display = "none";
+                        fisica.style.display = "block";
+                    }
+                }
+
+                tipo.addEventListener("change", actualizar);
+                actualizar();
+
+                const departamentos = {
+                    "1º de Mayo": ["Barrio de los Pescadores", "Colonia Benítez", "Lote 1", "Margarita Belén"],
+                    "2 de Abril": ["Hermoso Campo", "Itín"],
+                    "9 de Julio": ["Las Breñas", "Las Piedritas"],
+                    "12 de Octubre": ["Gancedo", "General Capdevila", "General Pinedo", "Mesón de Fierro", "Pampa Landriel"],
+                    "25 de Mayo": ["Colonia Aborigen", "Machagai", "Napalpí"],
+                    "Almirante Brown": ["Concepción del Bermejo", "Los Frentones", "Pampa del Infierno", "Río Muerto", "Taco Pozo"],
+                    "Bermejo": ["General Vedia", "Isla del Cerrito", "La Leonesa", "Las Palmas", "Puerto Bermejo", "Puerto Eva Perón"],
+                    "Chacabuco": ["Charata"],
+                    "Comandante Fernández": ["Presidencia Roque Sáenz Peña"],
+                    "Fray Justo Santa María de Oro": ["Chorotis", "Santa Sylvina", "Venados Grandes"],
+                    "General Belgrano": ["Corzuela"],
+                    "General Donovan": ["La Escondida", "Lapachito", "La Verde", "Makallé"],
+                    "General Güemes": ["Comandancia Frías", "El Espinillo","El Sauzal","El Sauzalito", "Fortín Belgrano", "Fortín Lavalle", "Fuerte Esperanza", "Juan José Castelli","Las Hacheras", "Miraflores", "Nueva Pompeya", "Puerto Lavalle","Tartagal", "Tres Pozos", "Villa Río Bermejito", "Wichi", "Zaparinqui"],                    
+                    "Independencia": ["Avia Terai", "Campo Largo","Colonia José Mármol", "Fortín Las Chuñas", "Napenay"],
+                    "Libertad": ["Colonia Popular", "Estación General Obligado","Laguna Blanca", "Puerto Tirol"],
+                    "Libertador General San Martín": ["Ciervo Petiso", "General José de San Martín", "La Eduvigis", "Laguna Limpia", "Pampa Almirón", "Pampa del Indio","Presidencia Roca", "Selvas del Río de Oro"],
+                    "Maipú": ["Colonia La Matanza", "Kilómetro 855", "Kilómetro 884", "La Curva", "Tres Isletas"],
+                    "Mayor Luis Jorge Fontana": ["Colonia Pegouriel", "El Pastoril", "Enrique Urién", "Villa Ángela"],
+                    "O'Higgins": ["La Clotilde", "La Tigra", "San Bernardo"],
+                    "Presidencia de la Plaza": ["Presidencia de la Plaza"],
+                    "Quitilipi": ["El Paraisal","Quitilipi", "Villa El Palmar"],
+                    "San Fernando": ["Barranqueras", "Basail","Colonia Baranda", "Fontana", "Puerto Vilelas", "Resistencia"],
+                    "San Lorenzo": ["Samuhú", "Villa Berthet"],
+                    "Sargento Cabral": ["Capitán Solari", "Colonia Elisa", "Colonias Unidas", "Ingeniero Barbet", "Las Garcitas"],
+                    "Tapenagá": ["Charadai", "Cote Lai","Haumonia", "Horquilla", "La Sabana"],  
+                };
+
+                const departamentoSelect = document.getElementById("departamento");
+                const localidadSelect = document.getElementById("localidad");
+
+                for (let dep in departamentos) {
+                    let opt = document.createElement("option");
+                    opt.value = dep;
+                    opt.textContent = dep;
+                    departamentoSelect.appendChild(opt);
+                }
+
+                departamentoSelect.addEventListener("change", function() {
+                    localidadSelect.innerHTML = '<option value="">Selecciona una localidad</option>';
+                    const locs = departamentos[this.value] || [];
+                    locs.forEach(loc => {
+                        let opt = document.createElement("option");
+                        opt.value = loc;
+                        opt.textContent = loc;
+                        localidadSelect.appendChild(opt);
+                    });
+                });
+            });
+            </script>
+
 
             <button type="submit" class="btn-save">
                 <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
@@ -116,7 +192,6 @@
     </div>
 </div>
 
-<!-- JS -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const tipo = document.getElementById("id_tipo_cliente");
@@ -134,11 +209,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     tipo.addEventListener("change", actualizar);
-    actualizar(); // ejecuta al cargar la página
+    actualizar();
 });
 </script>
 
-<!-- CSS — MISMO ESTILO DEL ANTERIOR -->
 <style>
 .page-wrapper {
     display: flex;

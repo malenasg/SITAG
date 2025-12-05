@@ -1,24 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UsuarioForm
+from usuarios.forms import CustomLoginForm
 
 Usuario = get_user_model()
 
 def login_view(request):
+    print("ENTRÓ A MI LOGIN")
+
+    form = CustomLoginForm(request, data=request.POST or None)
+
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
             messages.success(request, "Inicio de sesión exitoso.")
-            return redirect('inicio:inicio')
-        else:
-            messages.error(request, "Usuario/contraseña incorrectos. Inténtelo de nuevo.")
-    return render(request, 'registration/login.html')
+            return redirect("inicio:inicio")
+
+    return render(request, 'registration/login.html', {"form": form})
 
 @login_required(login_url='usuarios:login')
 def logout_view(request):
@@ -87,7 +89,7 @@ def desactivar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
     usuario.is_active = False
     usuario.save()
-    messages.info(request, f"El usuario {usuario.username} fue desactivado.")
+    messages.info(request, f"Usuario desactivado.")
     return redirect('usuarios:lista_usuarios')
 
 
@@ -95,7 +97,7 @@ def activar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
     usuario.is_active = True
     usuario.save()
-    messages.success(request, f"El usuario {usuario.username} fue reactivado.")
+    messages.success(request, f"Usuario activado.")
     return redirect('usuarios:lista_usuarios_inactivos')
 
 def lista_usuarios_inactivos(request):

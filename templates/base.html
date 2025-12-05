@@ -22,7 +22,24 @@
         body {
             display: flex;
             height: 100vh;
-            overflow: hidden;
+            overflow: hidden; /* sin scroll */
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden; /* sin scroll */
+            padding: 30px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+
+        .main-scroll {
+            flex: 1;
+            overflow-y: hidden; /* quita scroll del contenido */
+            padding-right: 10px;
         }
 
         /* Sidebar */
@@ -125,8 +142,86 @@
             font-size: 1rem;   
             flex-shrink: 0;
         }
+
+        /* Toast container */
+        #toast-container {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        /* Toast base */
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 14px 20px;
+            min-width: 260px;
+
+            border-radius: 12px;
+
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.12);
+
+            color: white;
+            font-weight: 600;
+
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.22);
+
+            animation: toastSlideIn 0.45s ease forwards;
+
+            opacity: 1;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Ocultar */
+        .toast.hide {
+            opacity: 0;
+            transform: translateX(40px) scale(0.95);
+        }
+
+        /* Iconos */
+        .toast i {
+            font-size: 20px;
+        }
+
+        /* Colores personalizados */
+        .toast.success {
+            background: linear-gradient(135deg, #4caf50, #3d8f44);
+        }
+        .toast.error {
+            background: linear-gradient(135deg, #e53935, #c62828);
+        }
+        .toast.warning {
+            background: linear-gradient(135deg, #fb8c00, #ef6c00);
+        }
+        .toast.info {
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+        }
+
+        /* Animación moderna */
+        @keyframes toastSlideIn {
+            0% {
+                transform: translateX(60px) scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
     </style>
 </head>
+
+
+
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -142,6 +237,10 @@
                 <a href="{% url 'trabajos:lista_trabajos' %}" class="{% if request.resolver_match.url_name == 'lista_trabajos' %}active{% endif %}">
                     <i class="fa-solid fa-briefcase"></i> Trabajos
                 </a>
+                <a href="{% url 'facturacion:lista_facturas' %}" 
+                class="{% if request.resolver_match.url_name == 'lista_facturas' or request.resolver_match.url_name == 'crear_factura' %}active{% endif %}">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
+                </a>               
                 {% if request.user.rol == 'administrador' %}
                     <a href="{% url 'usuarios:lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">
                         <i class="fa-solid fa-user"></i> Usuarios
@@ -150,7 +249,7 @@
             </nav>
         </div>
 
-        <form action="{% url 'logout' %}" method="post" class="inline-form">
+        <form action="{% url 'usuarios:logout' %}" method="post" class="inline-form">
             {% csrf_token %}
             <button type="submit" class="btn">
                 <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
@@ -159,13 +258,58 @@
     </aside>
 
     <!-- Main content -->
-    <main>
-        <div class="main-scroll">
-            {% block content %}{% endblock %}
-        </div>
-        <footer>
-            &copy; {{ year }} SITAG
-        </footer>
-    </main>
+<main>
+    <div class="main-scroll">
+        <div id="toast-container"></div>
+
+        {% if messages %}
+            <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const container = document.getElementById("toast-container");
+
+                const icons = {
+                    success: "fa-circle-check",
+                    error: "fa-circle-xmark",
+                    warning: "fa-triangle-exclamation",
+                    info: "fa-circle-info"
+                };
+
+                {% for message in messages %}
+                    const type = "{{ message.tags }}";
+
+                    const toast = document.createElement("div");
+                    toast.className = `toast ${type}`;
+
+                    const icon = document.createElement("i");
+                    icon.classList.add("fa-solid", icons[type] || "fa-info-circle");
+
+                    const text = document.createElement("span");
+                    text.innerText = "{{ message|escapejs }}";
+
+                    toast.appendChild(icon);
+                    toast.appendChild(text);
+
+                    container.appendChild(toast);
+
+                    // auto-hide a los 3s
+                    setTimeout(() => {
+                        toast.classList.add("hide");
+                        setTimeout(() => toast.remove(), 450);
+                    }, 3000);
+                {% endfor %}
+            });
+            </script>
+
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        &copy; {{ year }} SITAG
+    </footer>
+</main>
+
 </body>
 </html>

@@ -63,6 +63,24 @@
                 {{ ubicacion_form.nomenclatura_catastral }}
             </div>
 
+            <!-- PRESUPUESTO -->
+            <div class="section" id="presupuestoSection">
+                <h3>Calcular Presupuesto</h3>
+
+                <label for="m2">Metros cuadrados</label>
+                <input type="number" id="m2" placeholder="Ej: 120" min="0">
+
+                <label for="precioM2">Precio por m²</label>
+                <input type="number" id="precioM2" placeholder="Ej: 5000" min="0">
+
+                <button type="button" class="btn-save" id="calcularPresupuestoBtn">
+                    <i class="fa-solid fa-calculator"></i> Calcular
+                </button>
+
+                <div id="resultadoPresupuesto" style="margin-top:12px; font-weight:600;"></div>
+            </div>
+
+
             <button type="submit" class="btn-save">
                 <i class="fa-solid fa-floppy-disk"></i> Guardar Trabajo
             </button>
@@ -172,5 +190,27 @@ input:focus, select:focus, textarea:focus {
     color: #508265;
 }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnCalcular = document.getElementById("calcularPresupuestoBtn");
+    const resultado = document.getElementById("resultadoPresupuesto");
+
+    btnCalcular.addEventListener("click", function() {
+        const m2 = parseFloat(document.getElementById("m2").value);
+        const precioM2 = parseFloat(document.getElementById("precioM2").value);
+
+        if (isNaN(m2) || isNaN(precioM2) || m2 <= 0 || precioM2 <= 0) {
+            alert("Ingrese valores válidos para metros cuadrados y precio por m².");
+            resultado.innerText = "";
+            return;
+        }
+
+        const total = m2 * precioM2;
+        resultado.innerText = `Presupuesto estimado: $${total.toLocaleString()}`;
+    });
+});
+</script>
+
 
 {% endblock %}

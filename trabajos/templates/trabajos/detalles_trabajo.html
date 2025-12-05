@@ -5,102 +5,82 @@
 
 {% block content %}
 <style>
-/* ---------- ESTILO MODERNO 2025 ---------- */
-
-.detail-wrapper {
-    max-width: 900px;
+/* ======= ESTILO SITAG 2025 - INTEGRADO ======= */
+.wrapper-sitag {
+    max-width: 950px;
     margin: 30px auto;
-    padding: 10px;
 }
-
-.section-card {
-    background: #ffffff;
-    border-radius: 18px;
+.card-sitag {
+    background: #fff;
     padding: 32px;
-    margin-bottom: 28px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    border: 1px solid #f0f0f0;
+    border-radius: 18px;
+    margin-bottom: 26px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 3px 18px rgba(0,0,0,0.04);
 }
-
-.section-title {
-    font-size: 1.45rem;
+.card-title-sitag {
+    font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 20px;
-    color: #222;
+    color: #1d2939;
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
-.section-title i {
-    font-size: 1.4rem;
+.card-title-sitag i {
     color: #4c7a63;
+    font-size: 1.4rem;
 }
-
 .data-item {
     margin-bottom: 14px;
 }
-
 .data-item strong {
+    font-size: 0.92rem;
+    color: #475467;
     display: block;
-    font-size: 0.95rem;
-    color: #555;
 }
-
 .data-item span {
     font-size: 1.05rem;
-    color: #333;
+    color: #1d2939;
 }
-
-/* Listas modernas */
-.modern-list {
+.list-sitag {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-
-.modern-list li {
+.list-sitag li {
     padding: 14px 0;
-    border-bottom: 1px solid #ececec;
+    border-bottom: 1px solid #ededed;
 }
-
-.modern-list li:last-child {
+.list-sitag li:last-child {
     border-bottom: none;
 }
-
-.modern-list strong {
-    color: #222;
-    font-size: 1.05rem;
+.list-sitag strong {
+    color: #1d2939;
 }
-
-.modern-list p {
-    margin: 4px 0 0;
-    color: #666;
-    font-size: 0.9rem;
+.list-sitag p {
+    margin: 5px 0 0;
+    color: #555;
 }
-
-.btn-modern {
-    display: inline-block;
+.btn-sitag {
     background: #4c7a63;
     color: #fff;
-    padding: 12px 22px;
+    padding: 12px 26px;
     border-radius: 12px;
     text-decoration: none;
     font-weight: 600;
-    transition: 0.25s;
+    transition: .25s;
 }
-
-.btn-modern:hover {
+.btn-sitag:hover {
     background: #3a624f;
 }
 </style>
 
-
-<div class="detail-wrapper">
+<div class="wrapper-sitag">
 
     <!-- DATOS PRINCIPALES -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fa-solid fa-clipboard-list"></i> Detalle del trabajo</h2>
+    <div class="card-sitag">
+        <h2 class="card-title-sitag"><i class="fa-solid fa-clipboard-list"></i> Datos del Trabajo</h2>
 
         <div class="data-item">
             <strong>Título</strong>
@@ -123,10 +103,9 @@
         </div>
     </div>
 
-
     <!-- CLIENTE -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fa-solid fa-user"></i> Cliente</h2>
+    <div class="card-sitag">
+        <h2 class="card-title-sitag"><i class="fa-solid fa-user"></i> Cliente asociado</h2>
 
         <div class="data-item">
             <strong>Nombre</strong>
@@ -149,17 +128,18 @@
         </div>
     </div>
 
-
     <!-- PLANOS -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fa-solid fa-ruler-combined"></i> Planos asociados</h2>
+    <div class="card-sitag">
+        <h2 class="card-title-sitag"><i class="fa-solid fa-ruler-combined"></i> Planos asociados</h2>
 
         {% if planos %}
-            <ul class="modern-list">
+            <ul class="list-sitag">
                 {% for plano in planos %}
                     <li>
-                        <strong>{{ plano.nombre }}</strong>
-                        <p>{{ plano.descripcion }}</p>
+                        <strong>{{ plano.descripcion }}</strong>
+                        {% if plano.archivo %}
+                            <p><a href="{{ plano.archivo.url }}" target="_blank">Ver archivo</a></p>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -168,28 +148,40 @@
         {% endif %}
     </div>
 
+    <!-- FACTURAS -->
+    <div class="card-sitag">
+        <h2 class="card-title-sitag"><i class="fa-solid fa-file-invoice-dollar"></i> Facturas asociadas</h2>
 
-    <!-- CUENTAS -->
-    <div class="section-card">
-        <h2 class="section-title"><i class="fa-solid fa-money-bill"></i> Cuentas asociadas</h2>
+        {% if facturas %}
+            {% for factura in facturas %}
+                <div class="card-sitag mb-3">
+                    <p><strong>Factura Nº:</strong> {{ factura.id }}</p>
+                    <p><strong>Costo total:</strong> ${{ factura.monto_total }}</p>
+                    <p><strong>Saldo pendiente:</strong> ${{ factura.saldo }}</p>
+                    <p><strong>Estado:</strong> {{ factura.estado }}</p>
 
-        {% if cuentas %}
-            <ul class="modern-list">
-                {% for cuenta in cuentas %}
-                    <li>
-                        <strong>{{ cuenta.descripcion }}</strong>
-                        <p>Monto: ${{ cuenta.monto }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
+                    {% if factura.trabajo.pagos.all %}
+                        <h6>Pagos realizados:</h6>
+                        <ul>
+                            {% for pago in factura.trabajo.pagos.all %}
+                                <li>{{ pago.fecha }} - ${{ pago.monto }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <a class="btn btn-primary" href="{% url 'facturacion:detalle_factura' factura.id %}">
+                        Ver detalles de la factura
+                    </a>
+                </div>
+            {% endfor %}
         {% else %}
-            <p class="text-muted">No hay cuentas asociadas.</p>
+            <p>No hay facturas asociadas.</p>
         {% endif %}
     </div>
 
-    <!-- VOLVER -->
+    <!-- BOTÓN VOLVER -->
     <div class="text-end mt-3">
-        <a href="{% url 'trabajos:lista_trabajos' %}" class="btn-modern">
+        <a href="{% url 'trabajos:lista_trabajos' %}" class="btn-sitag">
             ← Volver
         </a>
     </div>

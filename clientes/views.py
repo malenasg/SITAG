@@ -16,7 +16,7 @@ def agregar_cliente(request):
             cliente = form.save(commit=False)
             cliente.activo = True
             cliente.save()
-            messages.success(request, "Cliente agregado correctamente")
+            messages.success(request, "Datos cargados correctamente")
             return redirect('clientes:lista_clientes')
         else:
             # Los errores ahora aparecerán directamente sobre los campos
@@ -36,7 +36,7 @@ def editar_cliente(request, cliente_id):
             cliente = form.save(commit=False)
             cliente.activo = True
             cliente.save()
-            messages.success(request, "Cliente actualizado correctamente")
+            messages.success(request, "Se guardaron los datos correctamente.")
             return redirect('clientes:lista_clientes')
         else:
             messages.error(request, "Por favor corrija los errores del formulario")
@@ -45,10 +45,22 @@ def editar_cliente(request, cliente_id):
     
     return render(request, 'clientes/editar_cliente.html', {'form': form, 'cliente': cliente})
 
-# Ocultar cliente
-def ocultar_cliente(request, cliente_id):
+def mostrar_cliente(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
+    cliente.activo = True
+    cliente.save()
+
+    messages.success(request, "El cliente fue activado correctamente.")
+    return redirect("clientes:clientes_ocultos")
+
+def clientes_ocultos(request):
+    clientes = Cliente.objects.filter(activo=False)
+    return render(request, 'clientes/lista_ocultos.html', {'clientes': clientes})
+
+def ocultar_cliente(request, id):
+    cliente = get_object_or_404(Cliente, id=id)
     cliente.activo = False
     cliente.save()
-    messages.success(request, "Cliente ocultado correctamente")
+    messages.info(request, f"El cliente fue ocultado exitosamente.")
     return redirect('clientes:lista_clientes')
+

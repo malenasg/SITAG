@@ -2,10 +2,9 @@ from django import forms
 from django.core.validators import RegexValidator
 from .models import Cliente
 
-# Validator para CUIL/CUIT: formato 20-12345678-9
 cuil_validator = RegexValidator(
     regex=r'^\d{2}-\d{8}-\d{1}$',
-    message='El CUIL/CUIT debe tener el formato 20-12345678-9'
+    message='El CUIL/CUIT debe tener el formato XX-XXXXXXXX-X'
 )
 
 class ClienteForm(forms.ModelForm):
@@ -27,7 +26,6 @@ def clean(self):
     tipo = cleaned_data.get("tipo_cliente")
     cuil = cleaned_data.get("cuil")
 
-    # Validar persona física
     if tipo == "fisica":
         if not cleaned_data.get("nombre"):
             self.add_error('nombre', 'El nombre es obligatorio')
@@ -39,7 +37,6 @@ def clean(self):
             if not re.match(r'^\d{2}-\d{8}-\d{1}$', cuil):
                 self.add_error('cuil', 'Formato incorrecto. Ejemplo: 20-12345678-9')
 
-    # Validar persona jurídica
     if tipo == "juridica":
         if not cleaned_data.get("razon_social"):
             self.add_error('razon_social', 'La razón social es obligatoria')

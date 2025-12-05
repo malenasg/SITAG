@@ -1,0 +1,27 @@
+<h1>Presupuestos</h1>
+<a href="{% url 'facturacion:nuevo_presupuesto' %}">Nuevo Presupuesto</a>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Título</th>
+        <th>Superficie</th>
+        <th>Tipo</th>
+        <th>Ubicación</th>
+        <th>Costo Estimado</th>
+        <th>Aprobado</th>
+    </tr>
+    {% for presu in presupuestos %}
+    <tr>
+        <td>{{ presu.id }}</td>
+        <td>{{ presu.cliente }}</td>
+        <td>{{ presu.titulo }}</td>
+        <td>{{ presu.superficie }}</td>
+        <td>{{ presu.tipo }}</td>
+        <td>{{ presu.ubicacion }}</td>
+        <td>{{ presu.costo_estimado }}</td>
+        <td>{{ presu.aprobado }}</td>
+    </tr>
+    {% endfor %}
+</table>

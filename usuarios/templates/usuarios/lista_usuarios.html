@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 h1 {
   font-size: 2rem;
@@ -34,18 +34,37 @@ h1 {
   transition: background-color 0.25s, transform 0.15s;
 }
 .btn-agregar:hover {
-  background-color: #508265;
+  background-color: #406a52;
   transform: scale(1.03);
 }
 
-/* ====== Tabla ====== */
+/* ====== Input búsqueda ====== */
+.input-busqueda {
+    width: 97.7%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+.input-busqueda:focus {
+    border-color: #508265;
+    box-shadow: 0 0 6px rgba(80,130,101,0.4);
+    outline: none;
+}
+
+/* ====== Tabla con scroll ====== */
+.tabla-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid #e1e1e1;
+}
 .tabla {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 .tabla th {
   background-color: #f8f9fa;
@@ -53,6 +72,9 @@ h1 {
   padding: 12px 18px;
   font-weight: 600;
   color: #333;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 .tabla td {
   padding: 14px 18px;
@@ -81,7 +103,7 @@ h1 {
   color: white;
 }
 .btn-editar:hover {
-  background-color: #567e90;
+  background-color: #456977;
 }
 .btn-desactivar {
   background-color: #e9ecef;
@@ -113,17 +135,22 @@ h1 {
   </a>
 </div>
 
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Usuario</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Opciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for usuario in usuarios %}
+<!-- Input búsqueda -->
+<input type="text" id="searchInput" placeholder="Buscar usuario (Nombre, Email o Rol)" class="input-busqueda">
+
+<!-- Tabla con scroll -->
+<div class="tabla-wrapper">
+  <table class="tabla" id="usuariosTabla">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for usuario in usuarios %}
       <tr>
         <td>{{ usuario.username }}</td>
         <td>{{ usuario.email }}</td>
@@ -134,9 +161,8 @@ h1 {
           </a>
 
           {% if usuario.is_active %}
-            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}"
-              class="btn-accion btn-desactivar"
-              onclick="return confirm('¿Seguro que querés desactivar este usuario?');">
+            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}" class="btn-accion btn-desactivar"
+               onclick="return confirm('¿Seguro que querés desactivar este usuario?');">
               <i class="fa-solid fa-user-slash"></i> Desactivar
             </a>
           {% else %}
@@ -144,16 +170,41 @@ h1 {
           {% endif %}
         </td>
       </tr>
-    {% empty %}
+      {% empty %}
       <tr>
-        <td colspan="5" style="text-align: center;">No hay usuarios activos.</td>
+        <td colspan="4" style="text-align: center;">No hay usuarios activos.</td>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 <a href="{% url 'usuarios:lista_usuarios_inactivos' %}" class="btn-inactivos">
-  Ver usuarios inactivos
+  <i class="fa-solid fa-eye-slash"></i> Ver usuarios inactivos
 </a>
+
+<!-- JS búsqueda -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchInput");
+    const table = document.getElementById("usuariosTabla");
+    const rows = table.getElementsByTagName("tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const filter = searchInput.value.toLowerCase();
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName("td");
+            let match = false;
+            for (let j = 0; j < 3; j++) { // Nombre, Email, Rol
+                if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+                    match = true;
+                    break;
+                }
+            }
+            rows[i].style.display = match ? "" : "none";
+        }
+    });
+});
+</script>
 
 {% endblock %}
