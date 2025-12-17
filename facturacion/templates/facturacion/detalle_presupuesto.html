@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle Presupuesto | SITAG{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+<div class="page-wrapper">
+    <div class="form-card">
+
+        <h2 class="form-title">Presupuesto Nº {{ presupuesto.id }} – {{ presupuesto.cliente.nombre }}</h2>
+
+        <div class="section">
+            <h3>Datos Generales</h3>
+            <p><strong>Cliente:</strong> {{ presupuesto.cliente.nombre }}</p>
+            <p><strong>Trabajo:</strong> {% if presupuesto.trabajo %}{{ presupuesto.trabajo.titulo }}{% else %}No especificado{% endif %}</p>
+            <p><strong>Ubicación:</strong> {{ presupuesto.ubicacion|default:"—" }}</p>
+            <p><strong>Días en campo:</strong> {{ presupuesto.dias_campo }}</p>
+            <p><strong>Días en gabinete:</strong> {{ presupuesto.dias_gabinete }}</p>
+            <p><strong>Estado:</strong> <span class="estado estado-{{ presupuesto.estado }}">{{ presupuesto.get_estado_display }}</span></p>
+        </div>
+
+        <div class="section">
+            <h3>Resumen de Costos</h3>
+            <table class="items-table">
+                <tr><th>Gastos de campo</th><td>$ {{ presupuesto.subtotal_gastos_campo|floatformat:2 }}</td></tr>
+                <tr><th>Gastos de gestión</th><td>$ {{ presupuesto.subtotal_gastos_gestion|floatformat:2 }}</td></tr>
+                <tr><th>Honorarios</th><td>$ {{ presupuesto.subtotal_honorarios|floatformat:2 }}</td></tr>
+                <tr><th>Subtotal</th><td>$ {{ presupuesto.subtotal|floatformat:2 }}</td></tr>
+                <tr><th>Impuestos ({{ presupuesto.porcentaje_impuestos }}%)</th><td>$ {{ presupuesto.impuestos|floatformat:2 }}</td></tr>
+                <tr><th><strong>Total final</strong></th><td><strong>$ {{ presupuesto.total|floatformat:2 }}</strong></td></tr>
+            </table>
+        </div>
+
+        <div class="section actions">
+            <form method="post" action="{% url 'facturacion:cambiar_estado_presupuesto' presupuesto.id %}">
+                {% csrf_token %}
+                <label for="estado">Cambiar estado</label>
+                <select name="estado" id="estado">
+                    <option value="pendiente" {% if presupuesto.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="aceptado" {% if presupuesto.estado == 'aceptado' %}selected{% endif %}>Aceptado</option>
+                    <option value="rechazado" {% if presupuesto.estado == 'rechazado' %}selected{% endif %}>Rechazado</option>
+                </select>
+                <button type="submit" class="btn-save">
+                    <i class="fa-solid fa-check"></i> Actualizar Estado
+                </button>
+            </form>
+
+            {% if presupuesto.estado == 'aceptado' and presupuesto.factura %}
+                <a href="{% url 'facturacion:detalle_factura' presupuesto.factura.id %}" class="btn-save" style="margin-top:10px;">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Ver Factura
+                </a>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'facturacion:lista_presupuestos' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Presupuestos
+        </a>
+
+    </div>
+</div>
+{% endblock %}

@@ -4,77 +4,7 @@
 {% block title %}Detalle Trabajo | SITAG{% endblock %}
 
 {% block content %}
-<style>
-/* ======= ESTILO SITAG 2025 - INTEGRADO ======= */
-.wrapper-sitag {
-    max-width: 950px;
-    margin: 30px auto;
-}
-.card-sitag {
-    background: #fff;
-    padding: 32px;
-    border-radius: 18px;
-    margin-bottom: 26px;
-    border: 1px solid #e9ecef;
-    box-shadow: 0 3px 18px rgba(0,0,0,0.04);
-}
-.card-title-sitag {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #1d2939;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.card-title-sitag i {
-    color: #4c7a63;
-    font-size: 1.4rem;
-}
-.data-item {
-    margin-bottom: 14px;
-}
-.data-item strong {
-    font-size: 0.92rem;
-    color: #475467;
-    display: block;
-}
-.data-item span {
-    font-size: 1.05rem;
-    color: #1d2939;
-}
-.list-sitag {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.list-sitag li {
-    padding: 14px 0;
-    border-bottom: 1px solid #ededed;
-}
-.list-sitag li:last-child {
-    border-bottom: none;
-}
-.list-sitag strong {
-    color: #1d2939;
-}
-.list-sitag p {
-    margin: 5px 0 0;
-    color: #555;
-}
-.btn-sitag {
-    background: #4c7a63;
-    color: #fff;
-    padding: 12px 26px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: .25s;
-}
-.btn-sitag:hover {
-    background: #3a624f;
-}
-</style>
+<link rel="stylesheet" href="{% static 'trabajos/css/detalles_trabajo.css' %}">
 
 <div class="wrapper-sitag">
 
@@ -147,36 +77,11 @@
             <p class="text-muted">No hay planos asociados.</p>
         {% endif %}
     </div>
-
-    <!-- FACTURAS -->
-    <div class="card-sitag">
-        <h2 class="card-title-sitag"><i class="fa-solid fa-file-invoice-dollar"></i> Facturas asociadas</h2>
-
-        {% if facturas %}
-            {% for factura in facturas %}
-                <div class="card-sitag mb-3">
-                    <p><strong>Factura Nº:</strong> {{ factura.id }}</p>
-                    <p><strong>Costo total:</strong> ${{ factura.monto_total }}</p>
-                    <p><strong>Saldo pendiente:</strong> ${{ factura.saldo }}</p>
-                    <p><strong>Estado:</strong> {{ factura.estado }}</p>
-
-                    {% if factura.trabajo.pagos.all %}
-                        <h6>Pagos realizados:</h6>
-                        <ul>
-                            {% for pago in factura.trabajo.pagos.all %}
-                                <li>{{ pago.fecha }} - ${{ pago.monto }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-
-                    <a class="btn btn-primary" href="{% url 'facturacion:detalle_factura' factura.id %}">
-                        Ver detalles de la factura
-                    </a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No hay facturas asociadas.</p>
-        {% endif %}
+    <!-- BOTÓN GENERAR PRESUPUESTO -->
+    <div class="text-end mt-3">
+        <a href="{% url 'facturacion:nuevo_presupuesto' trabajo.id %}" class="btn-sitag" style="background:#508265;color:white;">
+            💰 Generar Presupuesto
+        </a>
     </div>
 
     <!-- BOTÓN VOLVER -->

@@ -4,17 +4,16 @@
 {% block title %}Usuarios | SITAG{% endblock %}
 
 {% block content %}
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-/* ====== Cabecera ====== */
 .usuarios-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
 }
+
 h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -22,7 +21,7 @@ h1 {
   margin: 0;
 }
 
-/* ====== Botón Agregar ====== */
+/* Botón Agregar */
 .btn-agregar {
   background-color: #508265;
   color: white;
@@ -38,34 +37,37 @@ h1 {
   transform: scale(1.03);
 }
 
-/* ====== Input búsqueda ====== */
+/* Input búsqueda */
 .input-busqueda {
-    width: 97.7%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    margin-bottom: 20px;
+  width: 97.7%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: 0.25s;
+  margin-bottom: 20px;
 }
 .input-busqueda:focus {
-    border-color: #508265;
-    box-shadow: 0 0 6px rgba(80,130,101,0.4);
-    outline: none;
+  border-color: #508265;
+  box-shadow: 0 0 6px rgba(80,130,101,0.4);
+  outline: none;
 }
 
-/* ====== Tabla con scroll ====== */
+/* Tabla */
 .tabla-wrapper {
-  max-height: 400px;
+  height: calc(100vh - 260px);
   overflow-y: auto;
   border-radius: 12px;
   border: 1px solid #e1e1e1;
 }
+
 .tabla {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
   background-color: #fff;
 }
+
 .tabla th {
   background-color: #f8f9fa;
   text-align: left;
@@ -76,17 +78,19 @@ h1 {
   top: 0;
   z-index: 1;
 }
+
 .tabla td {
   padding: 14px 18px;
   border-top: 1px solid #eee;
   color: #444;
 }
+
 .tabla tr:hover {
   background-color: #f6fef7;
   transition: background-color 0.2s;
 }
 
-/* ====== Botones acción ====== */
+/* Botones */
 .btn-accion {
   display: inline-flex;
   align-items: center;
@@ -98,6 +102,7 @@ h1 {
   font-weight: 500;
   transition: all 0.2s;
 }
+
 .btn-editar {
   background-color: #567e90;
   color: white;
@@ -105,6 +110,7 @@ h1 {
 .btn-editar:hover {
   background-color: #456977;
 }
+
 .btn-desactivar {
   background-color: #e9ecef;
   color: #333;
@@ -113,6 +119,7 @@ h1 {
   background-color: #d6d8da;
 }
 
+/* Botón usuarios inactivos */
 .btn-inactivos {
   margin-top: 15px;
   background-color: #6c757d;
@@ -135,10 +142,8 @@ h1 {
   </a>
 </div>
 
-<!-- Input búsqueda -->
 <input type="text" id="searchInput" placeholder="Buscar usuario (Nombre, Email o Rol)" class="input-busqueda">
 
-<!-- Tabla con scroll -->
 <div class="tabla-wrapper">
   <table class="tabla" id="usuariosTabla">
     <thead>
@@ -161,9 +166,10 @@ h1 {
           </a>
 
           {% if usuario.is_active %}
-            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}" class="btn-accion btn-desactivar"
-               onclick="return confirm('¿Seguro que querés desactivar este usuario?');">
-              <i class="fa-solid fa-user-slash"></i> Desactivar
+            <a href="{% url 'usuarios:desactivar_usuario' usuario.id %}"
+               class="btn-accion btn-desactivar"
+               onclick="return confirmarDesactivar(event)">
+               <i class="fa-solid fa-user-slash"></i> Desactivar
             </a>
           {% else %}
             <span class="text-muted">Inactivo</span>
@@ -172,7 +178,7 @@ h1 {
       </tr>
       {% empty %}
       <tr>
-        <td colspan="4" style="text-align: center;">No hay usuarios activos.</td>
+        <td colspan="4" style="text-align:center;">No hay usuarios activos.</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -180,10 +186,9 @@ h1 {
 </div>
 
 <a href="{% url 'usuarios:lista_usuarios_inactivos' %}" class="btn-inactivos">
-  <i class="fa-solid fa-eye-slash"></i> Ver usuarios inactivos
+  Usuarios inactivos
 </a>
 
-<!-- JS búsqueda -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("searchInput");
@@ -195,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName("td");
             let match = false;
-            for (let j = 0; j < 3; j++) { // Nombre, Email, Rol
+            for (let j = 0; j < 3; j++) {
                 if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
                     match = true;
                     break;
@@ -204,6 +209,14 @@ document.addEventListener("DOMContentLoaded", function() {
             rows[i].style.display = match ? "" : "none";
         }
     });
+
+    window.confirmarDesactivar = function(event) {
+        event.preventDefault();
+        if (confirm("¿Seguro que deseas desactivar este usuario?")) {
+            window.location = event.target.closest("a").href;
+        }
+        return false;
+    };
 });
 </script>
 

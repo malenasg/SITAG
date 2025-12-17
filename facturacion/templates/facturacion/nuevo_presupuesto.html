@@ -1,7 +1,171 @@
-<h1>Nuevo Presupuesto</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar Presupuesto</button>
-</form>
-<a href="{% url 'facturacion:lista_presupuestos' %}">Volver a presupuestos</a>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nuevo Presupuesto | SITAG{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+
+<div class="page-wrapper">
+    <div class="form-card">
+        <form id="presupuesto-form" method="post">
+            {% csrf_token %}
+
+            <!-- 🟩 DATOS DEL TRABAJO -->
+            <div class="section">
+                <h3>Datos del Trabajo</h3>
+                <div class="grid-2">
+
+                    <div class="field">
+                        <label>Cliente</label>
+                        {% if cliente %}
+                            <input type="text" value="{{ cliente.nombre }}" readonly>
+                            <input type="hidden" name="cliente" value="{{ cliente.id }}">
+                        {% else %}
+                            <select name="cliente" required>
+                                <option value="">Seleccione un cliente</option>
+                                {% for c in clientes %}
+                                    <option value="{{ c.id }}">{{ c.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label>Trabajo</label>
+                        {% if trabajo %}
+                            <input type="text" value="{{ trabajo.titulo }}" readonly>
+                        {% else %}
+                            <input type="text" name="trabajo" placeholder="Título del trabajo">
+                        {% endif %}
+                    </div>
+
+                    <div class="field">
+                        <label>Ubicación</label>
+                        <input type="text" name="ubicacion" placeholder="Dirección completa o referencia"
+                               value="{% if trabajo and trabajo.ubicacion %}{{ trabajo.ubicacion }}{% endif %}">
+                    </div>
+
+                    <div class="field">
+                        <label>Días estimados en campo</label>
+                        <input type="number" name="dias_campo" min="0" value="{% if trabajo %}{{ trabajo.dias_campo }}{% else %}0{% endif %}">
+                    </div>
+
+                    <div class="field">
+                        <label>Días estimados en gabinete</label>
+                        <input type="number" name="dias_gabinete" min="0" value="{% if trabajo %}{{ trabajo.dias_gabinete }}{% else %}0{% endif %}">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 🟦 COSTOS DIRECTOS DE CAMPO -->
+            <div class="section">
+                <h3>Costos Directos de Campo</h3>
+                <div class="grid-2">
+                    <div class="field"><label>Personal ($)</label><input type="number" name="costo_personal" step="0.01" value="0" class="campo-input"></div>
+                    <div class="field"><label>Movilidad ($)</label><input type="number" name="costo_movilidad" step="0.01" value="0" class="campo-input"></div>
+                    <div class="field"><label>Viáticos ($)</label><input type="number" name="costo_viaticos" step="0.01" value="0" class="campo-input"></div>
+                    <div class="field"><label>Materiales ($)</label><input type="number" name="costo_materiales" step="0.01" value="0" class="campo-input"></div>
+                    <div class="field"><label>Desgaste de equipos ($)</label><input type="number" name="costo_desgaste" step="0.01" value="0" class="campo-input"></div>
+                    <div class="field"><label>Imprevistos ($)</label><input type="number" name="costo_imprevistos" step="0.01" value="0" class="campo-input"></div>
+                </div>
+            </div>
+
+            <!-- 🟧 GESTIÓN Y GABINETE -->
+            <div class="section">
+                <h3>Gastos de Gestión y Gabinete</h3>
+                <div class="grid-2">
+                    <div class="field"><label>Aportes colegio/caja ($)</label><input type="number" name="gasto_aportes" step="0.01" value="0" class="gestion-input"></div>
+                    <div class="field"><label>Sellados ($)</label><input type="number" name="gasto_sellado" step="0.01" value="0" class="gestion-input"></div>
+                    <div class="field"><label>Copias y Plotter ($)</label><input type="number" name="gasto_copias" step="0.01" value="0" class="gestion-input"></div>
+                    <div class="field"><label>Gestoría y movilidad ($)</label><input type="number" name="gasto_gestoria" step="0.01" value="0" class="gestion-input"></div>
+                </div>
+            </div>
+
+            <!-- 🟥 HONORARIOS -->
+            <div class="section">
+                <h3>Honorarios Profesionales</h3>
+                <div class="grid-2">
+                    <div class="field"><label>Honorarios mínimos ($)</label><input type="number" name="honorarios_minimos" step="0.01" value="0" class="honorarios-input"></div>
+                    <div class="field"><label>Adicional por complejidad ($)</label><input type="number" name="honorarios_adicional" step="0.01" value="0" class="honorarios-input"></div>
+                </div>
+            </div>
+
+            <!-- 🟫 TOTALES -->
+            <div class="section">
+                <h3>Totales</h3>
+                <table class="tabla-totales">
+                    <tr>
+                        <th>Gastos de Campo</th>
+                        <td><input type="text" id="total_campo" readonly value="0"></td>
+                    </tr>
+                    <tr>
+                        <th>Gastos de Gestión</th>
+                        <td><input type="text" id="total_gestion" readonly value="0"></td>
+                    </tr>
+                    <tr>
+                        <th>Honorarios</th>
+                        <td><input type="text" id="total_honorarios" readonly value="0"></td>
+                    </tr>
+                    <tr>
+                        <th>Subtotal</th>
+                        <td><input type="text" id="subtotal" readonly value="0"></td>
+                    </tr>
+                    <tr>
+                        <th>Impuestos (%)</th>
+                        <td><input type="number" id="impuestos" name="porcentaje_impuestos" value="21"></td>
+                    </tr>
+                    <tr>
+                        <th>Precio Final</th>
+                        <td><input type="text" id="precio_final" readonly value="0"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Presupuesto
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ====== SCRIPT PARA CÁLCULO AUTOMÁTICO ====== -->
+<script>
+function calcularTotales() {
+    // Sumar gastos de campo
+    let totalCampo = 0;
+    document.querySelectorAll('.campo-input').forEach(i => totalCampo += parseFloat(i.value || 0));
+
+    // Sumar gastos de gestión
+    let totalGestion = 0;
+    document.querySelectorAll('.gestion-input').forEach(i => totalGestion += parseFloat(i.value || 0));
+
+    // Sumar honorarios
+    let totalHonorarios = 0;
+    document.querySelectorAll('.honorarios-input').forEach(i => totalHonorarios += parseFloat(i.value || 0));
+
+    // Subtotal
+    let subtotal = totalCampo + totalGestion + totalHonorarios;
+
+    // Impuestos
+    let impuestos = parseFloat(document.getElementById('impuestos').value || 0);
+    let precioFinal = subtotal + subtotal * impuestos / 100;
+
+    // Actualizar campos
+    document.getElementById('total_campo').value = totalCampo.toFixed(2);
+    document.getElementById('total_gestion').value = totalGestion.toFixed(2);
+    document.getElementById('total_honorarios').value = totalHonorarios.toFixed(2);
+    document.getElementById('subtotal').value = subtotal.toFixed(2);
+    document.getElementById('precio_final').value = precioFinal.toFixed(2);
+}
+
+// Escuchar cambios en todos los inputs relevantes
+document.querySelectorAll('.campo-input, .gestion-input, .honorarios-input, #impuestos').forEach(input => {
+    input.addEventListener('input', calcularTotales);
+});
+
+// Calcular al cargar la página
+window.addEventListener('DOMContentLoaded', calcularTotales);
+</script>
+{% endblock %}

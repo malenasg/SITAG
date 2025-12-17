@@ -20,26 +20,30 @@
         }
 
         body {
-            display: flex;
+            margin: 0;
+            padding: 0;
             height: 100vh;
-            overflow: hidden; /* sin scroll */
+            display: flex;
+            overflow: hidden;
+            background-color: #ececec;
         }
 
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100%;
-            overflow: hidden; /* sin scroll */
-            padding: 30px;
-            box-sizing: border-box;
+            height: 100vh;
+            overflow: hidden;
             background-color: #f9f9f9;
+            padding: 0; /* antes 30px */
         }
+
 
         .main-scroll {
             flex: 1;
-            overflow-y: hidden; /* quita scroll del contenido */
-            padding-right: 10px;
+            overflow-y: auto
+            padding: 30px;
+            box-sizing: border
         }
 
         /* Sidebar */
@@ -134,13 +138,11 @@
         }
 
         footer {
-            margin-top: 0px;   
-            margin-bottom: 0px;    
-            padding: 5px 0;
             text-align: center;
             color: #555;
             font-size: 1rem;   
             flex-shrink: 0;
+            
         }
 
         /* Toast container */
@@ -239,7 +241,7 @@
                 </a>
                 <a href="{% url 'facturacion:lista_facturas' %}" 
                 class="{% if request.resolver_match.url_name == 'lista_facturas' or request.resolver_match.url_name == 'crear_factura' %}active{% endif %}">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Presupuestos y facturación
                 </a>               
                 {% if request.user.rol == 'administrador' %}
                     <a href="{% url 'usuarios:lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">

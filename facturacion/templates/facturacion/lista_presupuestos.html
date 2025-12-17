@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Presupuestos | SITAG{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+
+<div class="presupuestos-header">
+    <div class="header-izquierda">
+        <h1>Presupuestos</h1>
+    </div>
+
+    <div class="header-derecha">
+        <a href="{% url 'facturacion:lista_facturas' %}" class="btn-facturas">
+            Lista de Facturas
+        </a>
+    </div>
+</div>
+
+<input type="text" id="searchInput" placeholder="Buscar presupuesto" class="input-busqueda">
+
+<div class="tabla-wrapper">
+  <table class="tabla" id="presupuestosTabla">
+    <thead>
+      <tr>
+        <th>Trabajo</th>
+        <th>Cliente</th>
+        <th>Estado</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for presupuesto in presupuestos %}
+      <tr>
+        <td>{{ presupuesto.trabajo.titulo|default:"Sin trabajo" }}</td>
+        <td>
+          {% if presupuesto.trabajo and presupuesto.trabajo.cliente %}
+              {% if presupuesto.trabajo.cliente.tipo_cliente == 'fisica' %}
+                  {{ presupuesto.trabajo.cliente.clientefisico.nombre }} {{ presupuesto.trabajo.cliente.clientefisico.apellido }}
+              {% else %}
+                  {{ presupuesto.trabajo.cliente.clientejuridico.razon_social }}
+              {% endif %}
+          {% else %}
+              —
+          {% endif %}
+        </td>
+        <td>
+          {% if presupuesto.estado == 'aceptado' %}
+            <span class="estado estado-pagada">Aceptado</span>
+          {% elif presupuesto.estado == 'rechazado' %}
+            <span class="estado estado-rechazado">Rechazado</span>
+          {% else %}
+            <span class="estado estado-pendiente">Pendiente</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'facturacion:detalle_presupuesto' presupuesto.id %}" class="btn-accion btn-detalle">
+            <i class="fa-solid fa-eye"></i> Ver
+          </a>
+          {% if presupuesto.estado == 'aceptado' and not presupuesto.factura %}
+            <a href="{% url 'facturacion:nueva_factura' presupuesto.id %}" class="btn-accion btn-facturar">
+              <i class="fa-solid fa-file-invoice-dollar"></i> Facturar
+            </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;">No hay presupuestos cargados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="{% static 'facturacion/js/listas.js' %}"></script>
+{% endblock %}

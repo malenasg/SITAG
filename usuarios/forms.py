@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
 from .models import Usuario
 
 
@@ -13,23 +14,18 @@ class LoginForm(AuthenticationForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
-# usuarios/forms.py
-from django import forms
-from django.contrib.auth import get_user_model
-
 Usuario = get_user_model()
 
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['first_name', 'username', 'email', 'rol', 'is_active']
+        fields = ['first_name', 'username', 'email', 'rol']
 
         labels = {
             'first_name': 'Nombre completo',
             'username': 'Usuario',
             'email': 'Correo',
             'rol': 'Rol',
-            'is_active': 'Activo',
         }
 
         widgets = {
@@ -37,7 +33,6 @@ class UsuarioForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'rol': forms.Select(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 from django import forms

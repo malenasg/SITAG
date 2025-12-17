@@ -1,0 +1,101 @@
+.clientes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+/* Buscador */
+.input-busqueda {
+  width: 97.7%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: 0.25s;
+  margin-bottom: 20px;
+}
+
+.input-busqueda:focus {
+  border-color: #508265;
+  box-shadow: 0 0 6px rgba(80,130,101,0.4);
+  outline: none;
+}
+
+/* Tabla */
+.tabla-wrapper {
+  height: calc(100vh - 260px); /* altura dinámica */
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid #e1e1e1;
+}
+
+.tabla {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.tabla th {
+  background-color: #f8f9fa;
+  text-align: left;
+  padding: 12px 18px;
+  font-weight: 600;
+  color: #333;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tabla td {
+  padding: 14px 18px;
+  border-top: 1px solid #eee;
+  color: #444;
+}
+
+.tabla tr:hover {
+  background-color: #f6fef7;
+}
+
+/* Botones */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-mostrar {
+  background-color: #508265;
+  color: white;
+}
+.btn-mostrar:hover {
+  background-color: #406a52;
+}
+
+.btn-inactivos {
+  margin-top: 15px;
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+}
+.btn-inactivos:hover {
+  background-color: #5a6268;
+}

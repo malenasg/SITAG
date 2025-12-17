@@ -40,7 +40,6 @@ def crear_usuario(request):
         username = request.POST['username']
         email = request.POST['email']
         rol = request.POST['rol']
-        activo = request.POST.get('activo') == 'on'
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
@@ -57,7 +56,7 @@ def crear_usuario(request):
             first_name=nombre_completo,
             email=email,
             rol=rol,
-            is_active=activo
+            is_active=True  # siempre activo al crearlo
         )
         user.set_password(password1) 
         user.save()
@@ -67,19 +66,27 @@ def crear_usuario(request):
 
     return render(request, "usuarios/crear_usuario.html")
 
+
 def editar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
 
     if request.method == "POST":
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
-            form.save()
+            usuario_editado = form.save(commit=False)
+            usuario_editado.save()
             messages.success(request, "Usuario actualizado correctamente.")
-            return redirect('usuarios:lista_usuarios')
+            
+            # Redirigir según estado
+            if usuario_editado.is_active:
+                return redirect('usuarios:lista_usuarios')
+            else:
+                return redirect('usuarios:lista_usuarios_inactivos')
     else:
         form = UsuarioForm(instance=usuario)
 
     return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
+
 
 def lista_usuarios(request):
     usuarios = Usuario.objects.filter(is_active=True)
@@ -91,7 +98,6 @@ def desactivar_usuario(request, id):
     usuario.save()
     messages.info(request, f"Usuario desactivado.")
     return redirect('usuarios:lista_usuarios')
-
 
 def activar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)

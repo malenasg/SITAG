@@ -4,137 +4,29 @@
 {% block title %}Facturas | SITAG{% endblock %}
 
 {% block content %}
-<!-- Font Awesome para íconos -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-<style>
-.facturas-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #111;
-  margin: 0;
-}
-
-/* ====== Botones ====== */
-.btn-agregar, .btn-presupuesto {
-  background-color: #508265;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 10px;
-  text-decoration: none;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: background-color 0.25s, transform 0.15s;
-  margin-left: 8px;
-}
-.btn-agregar:hover, .btn-presupuesto:hover {
-  background-color: #406a52;
-  transform: scale(1.03);
-}
-
-/* ====== Input búsqueda ====== */
-.input-busqueda {
-    width: 97.7%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    transition: 0.25s;
-    margin-bottom: 20px;
-}
-.input-busqueda:focus {
-    border-color: #508265;
-    box-shadow: 0 0 6px rgba(80,130,101,0.4);
-    outline: none;
-}
-
-/* ====== Tabla ====== */
-.tabla-wrapper {
-  max-height: 400px;
-  overflow-y: auto;
-  border-radius: 12px;
-  border: 1px solid #e1e1e1;
-}
-.tabla {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  background-color: #fff;
-}
-.tabla th {
-  background-color: #f8f9fa;
-  text-align: left;
-  padding: 12px 18px;
-  font-weight: 600;
-  color: #333;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-.tabla td {
-  padding: 14px 18px;
-  border-top: 1px solid #eee;
-  color: #444;
-}
-.tabla tr:hover {
-  background-color: #f6fef7;
-  transition: background-color 0.2s;
-}
-
-/* ====== Botones de acción ====== */
-.btn-accion {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
-  text-decoration: none;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-.btn-editar { background-color: #567e90; color: white; }
-.btn-editar:hover { background-color: #456977; }
-.btn-pagos { background-color: #6c757d; color: white; }
-.btn-pagos:hover { background-color: #5a6268; }
-.btn-historial { background-color: #ff9f43; color: white; }
-.btn-historial:hover { background-color: #e68a00; }
-</style>
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
 
 <div class="facturas-header">
-  <h1>Facturas</h1>
-  <div>
-    <a href="{% url 'facturacion:nueva_factura' %}" class="btn-agregar">
-      <i class="fa-solid fa-file-invoice-dollar"></i> Nueva Factura
-    </a>
-    <a href="{% url 'facturacion:nuevo_pago' %}" class="btn-agregar">
-      <i class="fa-solid fa-hand-holding-dollar"></i> Registrar Pago
-    </a>
-    <a href="{% url 'facturacion:lista_presupuestos' %}" class="btn-presupuesto">
-      <i class="fa-solid fa-file-invoice"></i> Presupuestos
-    </a>
-  </div>
+    <div class="header-izquierda">
+        <h1>Facturas</h1>
+    </div>
+
+    <div class="header-derecha">
+        <a href="{% url 'facturacion:lista_presupuestos' %}" class="btn-presupuestos">
+            Lista de Presupuestos
+        </a>
+    </div>
 </div>
 
-<!-- Input búsqueda -->
-<input type="text" id="searchInput" placeholder="Buscar factura (ID, Cliente, Trabajo)" class="input-busqueda">
+<input type="text" id="searchInput" placeholder="Buscar factura" class="input-busqueda">
 
-<!-- Tabla con scroll -->
 <div class="tabla-wrapper">
   <table class="tabla" id="facturasTabla">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Cliente</th>
+        <th>N°</th>
         <th>Trabajo</th>
-        <th>Total</th>
-        <th>Pagado</th>
+        <th>Cliente</th>
         <th>Estado</th>
         <th>Opciones</th>
       </tr>
@@ -143,61 +35,39 @@ h1 {
       {% for factura in facturas %}
         <tr>
           <td>{{ factura.id }}</td>
-          <td>{{ factura.cliente }}</td>
-          <td>{{ factura.trabajo }}</td>
-          <td>{{ factura.monto_total }}</td>
-          <td>{{ factura.monto_pagado }}</td>
+          <td>{% if factura.presupuesto.trabajo %}{{ factura.presupuesto.trabajo.titulo }}{% else %}—{% endif %}</td>
           <td>
-            {% if factura.estado == 'ADEUDA' %}
-                <span class="text-danger">{{ factura.estado }}</span>
-            {% elif factura.estado == 'PARCIAL' %}
-                <span class="text-warning">{{ factura.estado }}</span>
+            {% if factura.presupuesto.trabajo and factura.presupuesto.trabajo.cliente %}
+              {% if factura.presupuesto.trabajo.cliente.tipo_cliente == 'fisica' %}
+                  {{ factura.presupuesto.trabajo.cliente.clientefisico.nombre }} {{ factura.presupuesto.trabajo.cliente.clientefisico.apellido }}
+              {% else %}
+                  {{ factura.presupuesto.trabajo.cliente.clientejuridico.razon_social }}
+              {% endif %}
             {% else %}
-                <span class="text-success">{{ factura.estado }}</span>
+              —
             {% endif %}
           </td>
           <td>
-            <a href="{% url 'facturacion:editar_factura' factura.id %}" class="btn-accion btn-editar">
-              <i class="fa-solid fa-pen-to-square"></i> Editar
-            </a>
-            <a href="{% url 'facturacion:ver_pagos' factura.id %}" class="btn-accion btn-pagos">
-              <i class="fa-solid fa-hand-holding-dollar"></i> Pagos
-            </a>
-            <a href="{% url 'facturacion:historial_factura' factura.id %}" class="btn-accion btn-historial">
-              <i class="fa-solid fa-clock-rotate-left"></i> Historial
+            {% if factura.pagada %}
+              <span class="estado estado-pagada">Pagada</span>
+            {% else %}
+              <span class="estado estado-pendiente">Pendiente</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'facturacion:detalle_factura' factura.id %}" class="btn-accion btn-detalle">
+              <i class="fa-solid fa-eye"></i> Ver
             </a>
           </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="7" style="text-align: center;">No hay facturas cargadas.</td>
+          <td colspan="5" style="text-align:center;">No hay facturas cargadas.</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 
-<!-- JS búsqueda -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const searchInput = document.getElementById("searchInput");
-    const table = document.getElementById("facturasTabla");
-    const rows = table.getElementsByTagName("tr");
-
-    searchInput.addEventListener("keyup", function() {
-        const filter = searchInput.value.toLowerCase();
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName("td");
-            let match = false;
-            for (let j = 0; j < 3; j++) { // ID, Cliente, Trabajo
-                if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
-                    match = true;
-                    break;
-                }
-            }
-            rows[i].style.display = match ? "" : "none";
-        }
-    });
-});
-</script>
+<script src="{% static 'facturacion/js/listas.js' %}"></script>
 {% endblock %}

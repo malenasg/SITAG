@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from clientes.models import Cliente
 from trabajos.models import Trabajo, Ubicacion, Plano
-from facturacion.models import Factura
 from .forms import TrabajoForm, UbicacionForm
 
+
 def lista_trabajos(request):
-    trabajos = Trabajo.objects.filter(visible=True)
+    trabajos = Trabajo.objects.all()
     clientes = Cliente.objects.filter(activo=True)
 
     cliente_id = request.GET.get('cliente')
@@ -28,28 +28,56 @@ def lista_trabajos(request):
     })
 
 
-def ocultar_trabajo(request, id):
-    trabajo = get_object_or_404(Trabajo, id=id)
-    trabajo.visible = False
-    trabajo.save()
-    messages.success(request, "El trabajo fue ocultado correctamente.")
-    return redirect('trabajos:lista_trabajos')
+def agregar_trabajo(request):
+    if request.method == 'POST':
+        trabajo_form = TrabajoForm(request.POST)
+        ubicacion_form = UbicacionForm(request.POST)
+
+        if trabajo_form.is_valid() and ubicacion_form.is_valid():
+            trabajo = trabajo_form.save(commit=False)
+
+            # Guardar ubicación solo si se cargó algo
+            if ubicacion_form.has_changed():
+                ubicacion = ubicacion_form.save()
+                trabajo.ubicacion = ubicacion
+
+            trabajo.save()
+
+            messages.success(request, "Trabajo guardado correctamente.")
+            return redirect('trabajos:lista_trabajos')
+        else:
+            messages.error(request, "Faltan completar campos, revise e inténtelo nuevamente.")
+    else:
+        trabajo_form = TrabajoForm()
+        ubicacion_form = UbicacionForm()
+
+    return render(request, 'trabajos/agregar_trabajo.html', {
+        'trabajo_form': trabajo_form,
+        'ubicacion_form': ubicacion_form,
+    })
 
 
 def editar_trabajo(request, trabajo_id):
     trabajo = get_object_or_404(Trabajo, id=trabajo_id)
-    ubicacion = trabajo.ubicacion or Ubicacion()
+    ubicacion = trabajo.ubicacion
 
     if request.method == "POST":
         trabajo_form = TrabajoForm(request.POST, instance=trabajo)
         ubicacion_form = UbicacionForm(request.POST, instance=ubicacion)
+
         if trabajo_form.is_valid() and ubicacion_form.is_valid():
-            ubicacion = ubicacion_form.save()
             trabajo = trabajo_form.save(commit=False)
-            trabajo.ubicacion = ubicacion
+
+            if ubicacion_form.has_changed():
+                ubicacion = ubicacion_form.save()
+                trabajo.ubicacion = ubicacion
+
             trabajo.save()
-            messages.success(request, "Trabajo actualizado correctamente.")
+
+            messages.success(request, "Se guardaron los datos correctamente.")
             return redirect('trabajos:lista_trabajos')
+        else:
+            messages.error(request, "Por favor corrija los errores del formulario.")
     else:
         trabajo_form = TrabajoForm(instance=trabajo)
         ubicacion_form = UbicacionForm(instance=ubicacion)
@@ -65,36 +93,9 @@ def detalle_trabajo(request, trabajo_id):
     trabajo = get_object_or_404(Trabajo, id=trabajo_id)
     cliente = trabajo.cliente
     planos = Plano.objects.filter(trabajo=trabajo)
-    facturas = Factura.objects.filter(trabajo=trabajo)  # Todas las facturas del trabajo
 
     return render(request, 'trabajos/detalles_trabajo.html', {
         'trabajo': trabajo,
         'cliente': cliente,
         'planos': planos,
-        'facturas': facturas,  # Se pasa al template
-    })
-
-
-
-def agregar_trabajo(request):
-    if request.method == 'POST':
-        trabajo_form = TrabajoForm(request.POST)
-        ubicacion_form = UbicacionForm(request.POST)
-
-        if trabajo_form.is_valid() and ubicacion_form.is_valid():
-            ubicacion = ubicacion_form.save()
-            trabajo = trabajo_form.save(commit=False)
-            trabajo.ubicacion = ubicacion
-            trabajo.save()
-            messages.success(request, "Se guardaron los datos correctamente.")
-            return redirect('trabajos:lista_trabajos')
-        else:
-            messages.error(request, "Faltan completar campos, revise e intente nuevamente.")
-    else:
-        trabajo_form = TrabajoForm()
-        ubicacion_form = UbicacionForm()
-
-    return render(request, 'trabajos/agregar_trabajo.html', {
-        'trabajo_form': trabajo_form,
-        'ubicacion_form': ubicacion_form
     })

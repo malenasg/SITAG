@@ -1,49 +1,45 @@
 from django import forms
-from django.core.validators import RegexValidator
-from .models import Cliente
+from .models import Cliente, ClienteFisico, ClienteJuridico, Ubicacion
 
-cuil_validator = RegexValidator(
-    regex=r'^\d{2}-\d{8}-\d{1}$',
-    message='El CUIL/CUIT debe tener el formato XX-XXXXXXXX-X'
-)
+class UbicacionForm(forms.ModelForm):
+    class Meta:
+        model = Ubicacion
+        fields = [
+            'provincia', 'departamento', 'localidad',
+            'calle', 'numero', 'barrio', 'piso', 'codigo_postal'
+        ]
+        widgets = {
+            'departamento': forms.Select(
+                attrs={'required': True}
+            ),
+            'localidad': forms.Select(
+                attrs={'required': True}
+            ),
+        }
 
-class ClienteForm(forms.ModelForm):
-    cuil = forms.CharField(
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': '20-12345678-9'})
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['departamento'].choices = [
+            ('', 'Seleccione un departamento')
+        ]
+        self.fields['localidad'].choices = [
+            ('', 'Seleccione una localidad')
+        ]
+
+class ClienteFisicoForm(forms.ModelForm):
+    class Meta:
+        model = ClienteFisico
+        fields = ['nombre', 'apellido', 'cuil']
 
 
+class ClienteJuridicoForm(forms.ModelForm):
+    class Meta:
+        model = ClienteJuridico
+        fields = ['razon_social', 'cuit']
+
+
+class ClienteBaseForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = '__all__'
-        exclude = ['activo']
-
-def clean(self):
-    cleaned_data = super().clean()
-
-    tipo = cleaned_data.get("tipo_cliente")
-    cuil = cleaned_data.get("cuil")
-
-    if tipo == "fisica":
-        if not cleaned_data.get("nombre"):
-            self.add_error('nombre', 'El nombre es obligatorio')
-        if not cleaned_data.get("apellido"):
-            self.add_error('apellido', 'El apellido es obligatorio')
-        if not cuil:
-            self.add_error('cuil', 'El CUIL es obligatorio')
-        else:
-            if not re.match(r'^\d{2}-\d{8}-\d{1}$', cuil):
-                self.add_error('cuil', 'Formato incorrecto. Ejemplo: 20-12345678-9')
-
-    if tipo == "juridica":
-        if not cleaned_data.get("razon_social"):
-            self.add_error('razon_social', 'La razón social es obligatoria')
-        if not cuil:
-            self.add_error('cuil', 'El CUIT es obligatorio')
-        else:
-            if not re.match(r'^\d{2}-\d{8}-\d{1}$', cuil):
-                self.add_error('cuil', 'Formato incorrecto. Ejemplo: 30-12345678-9')
-
-    return cleaned_data
+        fields = ['telefono', 'email']

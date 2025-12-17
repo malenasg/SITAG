@@ -1,62 +1,97 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Detalle Factura | SITAG{% endblock %}
 
 {% block content %}
-<h2>Detalle de Factura #{{ factura.id }}</h2>
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+<div class="page-wrapper">
+    <div class="form-card">
+        <div class="grid-section" style="display:flex; justify-content: space-between; align-items:center;">
+            <h2 class="form-title">Factura Nº {{ factura.id }}</h2>
 
-<table class="tabla-detalle">
-  <tr>
-    <th>Cliente:</th>
-    <td>{{ factura.cliente }}</td>
-  </tr>
-  <tr>
-    <th>Trabajo:</th>
-    <td>{{ factura.trabajo }}</td>
-  </tr>
-  <tr>
-    <th>Costo total:</th>
-    <td>${{ factura.costo_total }}</td>
-  </tr>
-  <tr>
-    <th>Pagado:</th>
-    <td>${{ factura.pagado_total }}</td>
-  </tr>
-  <tr>
-    <th>Saldo:</th>
-    <td>${{ factura.saldo }}</td>
-  </tr>
-  <tr>
-    <th>Estado:</th>
-    <td>{{ factura.estado }}</td>
-  </tr>
-</table>
+            <div style="display:flex; gap:10px;">
+                <a href="{% url 'facturacion:factura_pdf' factura.id %}" class="btn-save btn-pdf" target="_blank">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+                </a>
 
-<h3>Pagos registrados</h3>
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Fecha</th>
-      <th>Monto</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for pago in factura.pago_set.all %}
-    <tr>
-      <td>{{ pago.fecha }}</td>
-      <td>${{ pago.monto_pagado }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="2" style="text-align:center;">No hay pagos registrados.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+                {% if not factura.pagada %}
+                <a href="{% url 'facturacion:registrar_pago' factura.id %}" class="btn-save btn-reg">
+                    <i class="fa-solid fa-hand-holding-dollar"></i> Registrar Pago
+                </a>
+                {% endif %}
+            </div>
+        </div>
 
-<a href="{% url 'facturacion:registrar_pago' factura.id %}" class="btn-agregar">
-    <i class="fa-solid fa-money-bill-wave"></i> Registrar Pago
-</a>
-<a href="{% url 'facturacion:lista_facturas' %}" class="btn-cancelar">
-    <i class="fa-solid fa-arrow-left"></i> Volver
-</a>
+        <div class="section">
+            <h3>Datos de la Factura</h3>
+            <div class="grid-2">
+                <div class="field">
+                    <label>Cliente</label>
+                    <input type="text" 
+                        value="{% if factura.presupuesto.cliente.tipo_cliente == 'fisica' %}{{ factura.presupuesto.cliente.clientefisico.nombre }} {{ factura.presupuesto.cliente.clientefisico.apellido }}{% else %}{{ factura.presupuesto.cliente.clientejuridico.razon_social }}{% endif %}" 
+                        readonly>
+                </div>
+                <div class="field">
+                    <label>Trabajo</label>
+                    <input type="text" value="{% if factura.presupuesto.trabajo %}{{ factura.presupuesto.trabajo.titulo }}{% else %}No especificado{% endif %}" readonly>
+                </div>
+                <div class="field">
+                    <label>Fecha de emisión</label>
+                    <input type="text" value="{{ factura.fecha }}" readonly>
+                </div>
+                <div class="field">
+                    <label>Monto total ($)</label>
+                    <input type="text" value="{{ factura.monto_total|floatformat:2 }}" readonly>
+                </div>
+                <div class="field">
+                    <label>Monto pagado ($)</label>
+                    <input type="text" value="{{ factura.monto_pagado|floatformat:2 }}" readonly>
+                </div>
+                <div class="field">
+                    <label>Saldo ($)</label>
+                    <input type="text" value="{{ factura.saldo|floatformat:2 }}" readonly>
+                </div>
+                <div class="field">
+                    <label>Estado</label>
+                    <input type="text" value="{% if factura.pagada %}Pagada{% else %}Pendiente{% endif %}" readonly>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="section">
+            <h3>Pagos Registrados</h3>
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>ID Pago</th>
+                        <th>Fecha</th>
+                        <th>Monto ($)</th>
+                        <th>Método</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in pagos %}
+                    <tr>
+                        <td>{{ pago.id }}</td>
+                        <td>{{ pago.fecha }}</td>
+                        <td>{{ pago.monto|floatformat:2 }}</td>
+                        <td>{{ pago.metodo_pago }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center;">No hay pagos registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Facturas
+        </a>
+
+    </div>
+</div>
 {% endblock %}

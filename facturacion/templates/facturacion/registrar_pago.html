@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nuevo Pago | SITAG{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+
+<div class="page-wrapper">
+    <div class="form-card">
+        <h2 class="form-title">Registrar Nuevo Pago</h2>
+
+        <div class="section">
+            <form method="post">
+                {% csrf_token %}
+                <div class="grid-1">
+                    <div class="field">
+                        <label for="id_monto">Monto ($)</label>
+                        {{ form.monto }}
+                    </div>
+                    <div class="field">
+                        <label for="id_fecha">Fecha</label>
+                        {{ form.fecha }}
+                    </div>
+                    <div class="field">
+                        <label for="id_metodo_pago">Método de pago</label>
+                        {{ form.metodo_pago }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save" style="margin-top:20px;">
+                    <i class="fa-solid fa-hand-holding-dollar"></i> Registrar Pago
+                </button>
+            </form>
+        </div>
+
+        <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back" style="margin-top:12px;">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Facturas
+        </a>
+    </div>
+</div>
+{% endblock %}

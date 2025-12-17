@@ -4,11 +4,9 @@
 {% block title %}Usuarios Inactivos | SITAG{% endblock %}
 
 {% block content %}
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-/* ====== Cabecera ====== */
 .usuarios-header {
   display: flex;
   justify-content: space-between;
@@ -22,7 +20,7 @@ h1 {
   margin: 0;
 }
 
-/* ====== Input búsqueda ====== */
+/* Buscador */
 .input-busqueda {
     width: 97.7%;
     padding: 12px;
@@ -38,19 +36,21 @@ h1 {
     outline: none;
 }
 
-/* ====== Tabla con scroll ====== */
+/* Tabla igual que la de clientes */
 .tabla-wrapper {
-  max-height: 400px;
+  height: calc(100vh - 260px);
   overflow-y: auto;
   border-radius: 12px;
   border: 1px solid #e1e1e1;
 }
+
 .tabla {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
   background-color: #fff;
 }
+
 .tabla th {
   background-color: #f8f9fa;
   text-align: left;
@@ -61,17 +61,19 @@ h1 {
   top: 0;
   z-index: 1;
 }
+
 .tabla td {
   padding: 14px 18px;
   border-top: 1px solid #eee;
   color: #444;
 }
+
 .tabla tr:hover {
-  background-color: #fff5f5; /* rojo suave */
+  background-color: #fff5f5;
   transition: background-color 0.2s;
 }
 
-/* ====== Botones ====== */
+/* Botón activar */
 .btn-accion {
   display: inline-flex;
   align-items: center;
@@ -84,7 +86,6 @@ h1 {
   transition: all 0.2s;
 }
 
-/* Botón activar */
 .btn-activar {
   background-color: #22a745;
   color: white;
@@ -113,10 +114,8 @@ h1 {
   <h1>Usuarios Inactivos</h1>
 </div>
 
-<!-- Input búsqueda -->
 <input type="text" id="searchInput" placeholder="Buscar usuario (Nombre o Email)" class="input-busqueda">
 
-<!-- Tabla con scroll -->
 <div class="tabla-wrapper">
   <table class="tabla" id="usuariosTabla">
     <thead>
@@ -154,7 +153,6 @@ h1 {
   <i class="fa-solid fa-arrow-left"></i> Volver a usuarios activos
 </a>
 
-<!-- JS para búsqueda -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("searchInput");
@@ -166,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName("td");
             let match = false;
-            for (let j = 0; j < 2; j++) { // Nombre o Email
+            for (let j = 0; j < 2; j++) { 
                 if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
                     match = true;
                     break;

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
     
     'clientes',
     'facturacion',
@@ -76,7 +77,7 @@ WSGI_APPLICATION = 'SITAG.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SITAG',
+        'NAME': 'sitag',
         'USER': 'root',
         'PASSWORD': 'MsG00633.',
         'HOST': 'localhost',   

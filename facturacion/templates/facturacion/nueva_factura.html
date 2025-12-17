@@ -1,8 +1,27 @@
-<h1>{% if form.instance.pk %}Editar Factura{% else %}Nueva Factura{% endif %}</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-</form>
-<a href="{% url 'facturacion:lista_facturas' %}">Volver a facturas</a>
+{% block title %}Nueva Factura | SITAG{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'facturacion/css/facturacion.css' %}">
+
+<div class="page-wrapper">
+    <div class="form-card">
+        <h1>{% if form.instance.pk %}Editar Factura{% else %}Nueva Factura{% endif %}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn-save">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Factura
+            </button>
+        </form>
+
+        <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Facturas
+        </a>
+    </div>
+</div>
+{% endblock %}

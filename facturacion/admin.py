@@ -1,27 +1,24 @@
 from django.contrib import admin
-from .models import Factura, Pago, Presupuesto
+from .models import Factura, Presupuesto
 
+@admin.register(Factura)
 class FacturaAdmin(admin.ModelAdmin):
-    readonly_fields = ['monto_pagado']  # campo existente
-    list_display = ['id', 'cliente', 'trabajo', 'monto_total', 'monto_pagado', 'estado', 'fecha_creacion']
-    list_filter = ['estado', 'fecha_creacion']
-    search_fields = ['cliente__nombre', 'trabajo__titulo']  # ajustá según tus campos de Cliente y Trabajo
+    list_display = ('id', 'cliente_nombre', 'presupuesto', 'fecha', 'monto_pagado', 'pagada')
+    readonly_fields = ('fecha', 'monto_pagado')
+    list_filter = ('pagada', 'fecha')
+    search_fields = ('presupuesto__cliente__nombre',)
 
-admin.site.register(Factura, FacturaAdmin)
+    def cliente_nombre(self, obj):
+        return obj.presupuesto.cliente
+    cliente_nombre.short_description = "Cliente"
 
-class PagoAdmin(admin.ModelAdmin):
-    list_display = ['factura', 'trabajo_factura', 'monto', 'fecha']
-    search_fields = ['factura__cliente__nombre', 'factura__trabajo__titulo']
 
-    def trabajo_factura(self, obj):
-        return obj.factura.trabajo
-    trabajo_factura.short_description = "Trabajo"
-
-admin.site.register(Pago, PagoAdmin)
-
+@admin.register(Presupuesto)
 class PresupuestoAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cliente', 'titulo', 'superficie', 'tipo', 'costo_estimado', 'aprobado', 'fecha']
-    list_filter = ['aprobado', 'tipo', 'fecha']
-    search_fields = ['cliente__nombre', 'titulo', 'ubicacion']
+    list_display = ("id", "get_cliente", "estado")
+    list_filter = ('estado', 'fecha')
+    search_fields = ('trabajo__cliente__nombre', 'trabajo__titulo')
 
-admin.site.register(Presupuesto, PresupuestoAdmin)
+    def get_cliente(self, obj):
+        return obj.trabajo.cliente.nombre
+    get_cliente.short_description = "Cliente"

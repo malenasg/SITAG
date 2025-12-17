@@ -4,90 +4,105 @@
 {% block title %}Inicio | SITAG{% endblock %}
 
 {% block content %}
+
 <link rel="stylesheet" href="{% static 'inicio/css/inicio.css' %}">
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="inicio-header">
-  <h1>Bienvenido, {{ user.first_name|default:"usuario" }}</h1>
+<div class="dashboard-layout">
+
+  <div class="left-column">
+
+    <div class="inicio-header">
+      <h1>Bienvenido, {{ user.first_name }}</h1>
+    </div>
+
+    <!-- Filtros en línea -->
+    <form method="GET" class="filtros-inline">
+      <select name="estado">
+        <option value="">Estado</option>
+        {% for est in estados %}
+          <option value="{{ est }}" {% if request.GET.estado == est %}selected{% endif %}>{{ est }}</option>
+        {% endfor %}
+      </select>
+
+      <select name="tipo_cliente">
+        <option value="">Tipo de cliente</option>
+        <option value="fisica" {% if request.GET.tipo_cliente == 'fisica' %}selected{% endif %}>Físico</option>
+        <option value="juridica" {% if request.GET.tipo_cliente == 'juridica' %}selected{% endif %}>Jurídico</option>
+      </select>
+
+      <select name="responsable">
+        <option value="">Responsable</option>
+        {% for usuario in usuarios %}
+          <option value="{{ usuario.id }}" {% if request.GET.responsable == usuario.id|stringformat:"s" %}selected{% endif %}>
+            {{ usuario.get_full_name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn-aplicar">Aplicar</button>
+
+      {% if request.GET %}
+        <a href="{% url 'inicio:inicio' %}" class="btn-limpiar">✖</a>
+      {% endif %}
+    </form>
+
+    <!-- Tabla de trabajos recientes -->
+    <div class="tabla-wrapper">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Trabajo</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Cliente</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if trabajos %}
+          {% for t in trabajos %}
+            <tr>
+              <td>{{ t.titulo }}</td>
+              <td>{{ t.fecha_inicio|date:"d/m/Y" }}</td>
+              <td>{{ t.estado }}</td>
+              <td>
+                {% if t.cliente.tipo_cliente == 'fisica' %}
+                    {{ t.cliente.clientefisico.nombre }} {{ t.cliente.clientefisico.apellido }}
+                {% else %}
+                    {{ t.cliente.clientejuridico.razon_social }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          {% else %}
+            <tr><td colspan="4" style="text-align:center;">No hay trabajos recientes.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Gráficos -->
+  <div class="charts-container">
+    <div class="chart-card">
+      <h3>Estado de los trabajos</h3>
+      <canvas id="chartEstados"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Trabajos por mes</h3>
+      <canvas id="chartMensual"></canvas>
+    </div>
+  </div>
+
 </div>
-
-<form method="GET" class="filtros">
-  <select name="orden">
-    <option value="fecha_inicio" {% if request.GET.orden == 'fecha_inicio' %}selected{% endif %}>Ordenar por fecha</option>
-    <option value="titulo" {% if request.GET.orden == 'titulo' %}selected{% endif %}>Ordenar por título</option>
-  </select>
-  
-  <select name="localidad">
-    <option value="">Filtrar por localidad</option>
-    {% for loc in localidades %}
-      <option value="{{ loc }}" {% if request.GET.localidad == loc %}selected{% endif %}>{{ loc }}</option>
-    {% endfor %}
-  </select>
-  
-  <select name="estado">
-    <option value="">Filtrar por estado</option>
-    {% for est in estados %}
-      <option value="{{ est }}" {% if request.GET.estado == est %}selected{% endif %}>{{ est }}</option>
-    {% endfor %}
-  </select>
-  
-  <button type="submit">Aplicar</button>
-</form>
-
-<div class="cards-container">
-  <div class="card-resumen clientes">
-    <h3>Clientes</h3>
-    <span class="numero">{{ total_clientes|default:"0" }}</span>
-  </div>
-
-  <div class="card-resumen trabajos">
-    <h3>Trabajos activos</h3>
-    <span class="numero">{{ trabajos_activos|default:"0" }}</span>
-  </div>
-
-  <div class="card-resumen pendientes">
-    <h3>Pendientes esta semana</h3>
-    <span class="numero">{{ trabajos_pendientes|default:"0" }}</span>
-  </div>
-</div>
-
-<table class="tabla">
-  <thead>
-    <tr>
-      <th>Trabajo</th>
-      <th>Descripción</th>
-      <th>Fecha de inicio</th>
-      <th>Estado</th>
-      <th>Cliente asociado</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% if trabajos %}
-      {% for trabajo in trabajos %}
-        <tr>
-          <td>{{ trabajo.titulo }}</td>
-          <td>{{ trabajo.descripcion }}</td>
-          <td>{{ trabajo.fecha_inicio }}</td>
-          <td>{{ trabajo.estado }}</td>
-          <td>{{ trabajo.cliente.nombre }}</td>
-        </tr>
-      {% endfor %}
-    {% else %}
-      <tr><td colspan="5">No hay trabajos recientes</td></tr>
-    {% endif %}
-  </tbody>
-</table>
 
 <script>
-  const filtros = document.querySelectorAll('.filtros select');
-  filtros.forEach(filtro => {
-    filtro.addEventListener('change', () => {
-      filtro.form.submit();
-    });
-  });
+  window.estadosData = {{ estados_data|safe }};
+  window.mensualData = {{ mensual_data|safe }};
 </script>
+
+<script src="{% static 'inicio/js/inicio.js' %}"></script>
 
 {% endblock %}
